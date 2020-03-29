@@ -3,10 +3,15 @@ import pickle
 
 import data.saq as saq
 import numpy as np
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Queue, Pool, cpu_count
 
 from data import storage
 import pandas as pd
+
+
+def get_wine_pool(id):
+    stock = saq.get_stock_from_id(id)
+    return {'id': id, 'stock': stock['stock']}
 
 
 def get_wine(q, id):
@@ -58,30 +63,23 @@ if __name__ == '__main__':
     print('Fetching all pages')
     wine_names, wine_ids = get_all_online_wine_ids()
 
+    # Short list for debugging
     # wine_names, wine_ids = saq.parse_product_list('https://www.saq.com/en/products/wine/red-wine')
 
     wine_name_dict = {id: name for id, name in zip(wine_ids, wine_names)}
 
     # Now we have all the products, get the stock
     print('Beginning multiprocessing')
-    procs = []
-    stock_q = Queue()
-    for wine_id in wine_ids:
-        p = Process(target=get_wine, args=(stock_q, wine_id))
-        p.start()
-        procs.append(p)
 
-    for proc in procs:
-        proc.join()
+    p = Pool(cpu_count())
+    result = p.map(get_wine_pool, wine_ids)
+    print(result)
+    p.close()
+    p.join()
 
     print('Finished multiprocessing')
 
-    output_list = []
-    while not stock_q.empty():
-        output_list.append(stock_q.get())
-
-    print('Saving to CSV')
-    df = pd.DataFrame(output_list)
+    df = pd.DataFrame(result)
     df['wine_name'] = df['id'].map(wine_name_dict)
 
     df.set_index('wine_name', inplace=True)
