@@ -14,13 +14,10 @@ def get_wine(q, id):
     stock = saq.get_stock_from_id(id)
     q.put({'id': id, 'stock': stock['stock']})
 
-    print(f'Done {id}')
-
 
 def get_products(q, page):
     names, ids = saq.parse_product_list(page)
     q.put((names, ids))
-    print(f'Done {page}')
 
 
 def get_all_online_wine_ids(base_url='https://www.saq.com/en/products/wine?availability=Online&p=1'):
@@ -88,6 +85,7 @@ if __name__ == '__main__':
     df.set_index('wine_name', inplace=True)
     now = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
+    print('All wines retrieved')
     # For now we save to CSV locally, and upload to S3
     filepath = f'./{now}.csv'
     df.to_csv(filepath)
