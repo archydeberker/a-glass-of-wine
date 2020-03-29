@@ -29,7 +29,6 @@ def get_all_online_wine_ids(base_url='https://www.saq.com/en/products/wine?avail
     wine_ids = []
 
     for p in range(int(pages)):
-        print(f"Processing page {p}")
         names, ids = saq.parse_product_list(base_url + f'&p={p}')
         wine_names.extend(names), wine_ids.extend(ids)
 
@@ -56,15 +55,15 @@ def load_from_cache_or_get_wine_ids(cache_path='./wine_list.pkl'):
 if __name__ == '__main__':
 
     # TODO cache this
+    print('Fetching all pages')
     wine_names, wine_ids = get_all_online_wine_ids()
 
     # wine_names, wine_ids = saq.parse_product_list('https://www.saq.com/en/products/wine/red-wine')
 
     wine_name_dict = {id: name for id, name in zip(wine_ids, wine_names)}
 
-    print(len(wine_ids))
-
     # Now we have all the products, get the stock
+    print('Beginning multiprocessing')
     procs = []
     stock_q = Queue()
     for wine_id in wine_ids:
@@ -75,17 +74,20 @@ if __name__ == '__main__':
     for proc in procs:
         proc.join()
 
+    print('Finished multiprocessing')
+
     output_list = []
     while not stock_q.empty():
         output_list.append(stock_q.get())
 
+    print('Saving to CSV')
     df = pd.DataFrame(output_list)
     df['wine_name'] = df['id'].map(wine_name_dict)
 
     df.set_index('wine_name', inplace=True)
     now = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
-    print('All wines retrieved')
+    print('Uploading to S3')
     # For now we save to CSV locally, and upload to S3
     filepath = f'./{now}.csv'
     df.to_csv(filepath)
