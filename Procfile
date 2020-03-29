@@ -1,2 +1,2 @@
-release: python fetch_live_data.py
-web: sh setup.sh && streamlit run corona-calculator.py
+release: python data/get_all_wine_stocks.py
+web: gunicorn --chdir webapp app:app

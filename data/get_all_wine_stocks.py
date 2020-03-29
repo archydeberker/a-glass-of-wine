@@ -4,6 +4,8 @@ import pickle
 import data.saq as saq
 import numpy as np
 from multiprocessing import Process, Queue
+
+from data import storage
 import pandas as pd
 
 
@@ -86,6 +88,7 @@ if __name__ == '__main__':
     df.set_index('wine_name', inplace=True)
     now = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
-    df.to_csv(f'./{now}.csv')
-
-
+    # For now we save to CSV locally, and upload to S3
+    filepath = f'./{now}.csv'
+    df.to_csv(filepath)
+    storage.upload_data_to_s3(filepath, filepath.lstrip('./'))
