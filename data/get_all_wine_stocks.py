@@ -14,6 +14,12 @@ def get_wine_pool(id):
     return {'id': id, 'stock': stock['stock']}
 
 
+def get_wine_pool_all_stores(id):
+    stock_array = saq.get_per_store_stock(id)
+    # print(f"Finished for {id}")
+    return {'id': id, 'stock': stock_array}
+
+
 def get_wine(q, id):
 
     stock = saq.get_stock_from_id(id)
@@ -68,8 +74,32 @@ if __name__ == '__main__':
 
     wine_name_dict = {id: name for id, name in zip(wine_ids, wine_names)}
 
-    # Now we have all the products, get the stock
+    # Now we have all the products, get the stock per store
     print('Beginning multiprocessing')
+
+    p = Pool(cpu_count())
+    result = p.map(get_wine_pool_all_stores, wine_ids)
+    p.close()
+    p.join()
+
+    print('Finished multiprocessing')
+
+    df = pd.DataFrame(result)
+    df['wine_name'] = df['id'].map(wine_name_dict)
+
+    df.set_index('wine_name', inplace=True)
+    now = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+
+    print('Uploading to S3')
+    # For now we save to CSV locally, and upload to S3
+    filepath = f'./all_stores_{now}.csv'
+    df.to_csv(filepath)
+    storage.upload_data_to_s3(filepath, filepath.lstrip('./'))
+
+    # and for online
+
+    # Now we have all the products, get the stock per store
+    print('Beginning multiprocessing online')
 
     p = Pool(cpu_count())
     result = p.map(get_wine_pool, wine_ids)

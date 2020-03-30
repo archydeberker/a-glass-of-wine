@@ -32,9 +32,13 @@ def _parse_stock_json_for_store(store_json):
     return output_list
 
 
-def retrieve_per_store_stock(product_id, max_stores=MAX_STORES):
-    # For per stock we need to use this other bloody ID
-    alt_product_id = fetch_alternative_product_id(product_id)
+def get_per_store_stock(product_id, max_stores=MAX_STORES):
+    # # For per stock we need to use this other bloody ID
+    try:
+        alt_product_id = fetch_alternative_product_id(product_id)
+    except:
+        # This is already an alt
+        alt_product_id = product_id
 
     # It's paged, and we want to retrieve multiple sets of 10 stores
     output = []
