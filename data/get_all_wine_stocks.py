@@ -73,7 +73,6 @@ if __name__ == '__main__':
 
     p = Pool(cpu_count())
     result = p.map(get_wine_pool, wine_ids)
-    print(result)
     p.close()
     p.join()
 
