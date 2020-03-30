@@ -93,7 +93,16 @@
 </div>
 
 <section class="container">
-<hr class="hr">
+<hr class="hr" >
+
+    <div class="columns" style="padding-top: 50px">
+        {% for wine in top_wines %}
+        <div class="column has-text-centered">
+            <h1 class="subtitle">{{wine.name}}</h1>
+            <figure> <img src={{wine.img}}> </figure>
+        </div>
+        {% endfor %}
+    </div>
 </section>
 <section style="padding-top: 50px">
     <!--    <footer class="footer" style="bottom: 0; width: 100%; padding-bottom: 20px; ">-->
@@ -110,7 +119,6 @@
 
         <p> Let us know if you'd like to have a (virtual) drink! </p>
     </div>
-    <!--    </footer>-->
 </section>
 </body>
 </html>
