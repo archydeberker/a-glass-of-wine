@@ -2,18 +2,21 @@ from bs4 import BeautifulSoup
 import requests
 from functools import lru_cache
 import re
-import seaborn as sns
-import pandas as pd
-import matplotlib.pyplot as plt
 import numpy as np
 
 HEADER = {'Host': 'www.saq.com',
           'Referer': 'https://www.saq.com/en/12073995',
-          'Host': 'www.saq.com',
           'Accept': 'application/json',
           'X-Requested-With': 'XMLHttpRequest'}
 
 MAX_STORES = 100
+
+
+def get_image_for_wine(product_id):
+    url = f"https://www.saq.com/en/{product_id}"
+    get_soup(url)
+
+
 
 
 def retrieve_stock(product_id):
@@ -93,30 +96,33 @@ def parse_product_list(product_list_url):
     children = list_items.findChildren('li', {'class': 'item product product-item'})
     product_ids = []
     product_names = []
+    product_images = []
     for c in children:
         product_names.append(c.find('span', {'class': 'show-for-sr'}).text.strip().split('   ')[0])
         product_ids.append(c.find('div', {'product'}).attrs['data-product-id'])
-    return product_names, product_ids
+        product_images.append(c.find('span', {'class': 'product-image-wrapper'}).find('img').attrs['src'])
+
+    return product_names, product_ids, product_images
 
 
-def get_all_online_wine_ids(base_url='https://www.saq.com/en/products/wine?availability=Online&p=1'):
+def get_all_online_wine_ids(base_url='https://www.saq.com/en/products/wine?availability=Online'):
     total_wines = 1183
     wines_per_page = 24
     pages = np.ceil(total_wines/wines_per_page)
 
     wine_names = []
     wine_ids = []
-
+    wine_imgs = []
     for p in range(int(pages)):
-        names, ids = parse_product_list(base_url + f'&p={p}')
-        wine_names.extend(names), wine_ids.extend(ids)
+        names, ids, images = parse_product_list(base_url + f'&p={p}')
+        wine_names.extend(names), wine_ids.extend(ids), wine_imgs.extend(images)
 
-    return wine_names, wine_ids
+    return wine_names, wine_ids, wine_imgs
 
 
 def get_stock_for_top_red_wines(limit=-1):
     output_list = []
-    red_wine_names, red_wine_ids = parse_product_list('https://www.saq.com/en/products/wine/red-wine?product_list_limit=96')
+    red_wine_names, red_wine_ids, red_wine_imgs = parse_product_list('https://www.saq.com/en/products/wine/red-wine?product_list_limit=96')
     for wine in red_wine_ids[:limit]:
         out = {'id': wine}
         stock = get_stock_from_id(wine)
@@ -129,6 +135,7 @@ def get_stock_for_top_red_wines(limit=-1):
 
 if __name__ == '__main__':
 
-    names, ids = get_all_online_wine_ids()
+    names, ids, images = get_all_online_wine_ids()
     print(names)
+    print(images)
     print(len(ids))

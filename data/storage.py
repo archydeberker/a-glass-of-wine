@@ -1,6 +1,8 @@
 import boto3
 from botocore.exceptions import ClientError
 from data import constants
+from io import BytesIO
+import pandas as pd
 
 
 def _configure_s3_client():
@@ -27,5 +29,28 @@ def upload_data_to_s3(filepath, filename):
     return True
 
 
+def download_file_from_s3(filename):
+    s3_client = _configure_s3_client()
+    try:
+        download = s3_client.get_object(Key=filename, Bucket=constants.S3_BUCKET_NAME)
+    except ClientError as e:
+        print(e)
+        return False
+    content = download["Body"].read()
+    return content
+
+
+def list_data_on_s3(bucket=constants.S3_BUCKET_NAME):
+    s3_client = _configure_s3_client()
+    return [key['Key'] for key in s3_client.list_objects(Bucket=bucket)['Contents']]
+
+
+def get_s3_data_to_df(filename):
+    data = download_file_from_s3(filename)
+    return pd.read_csv(BytesIO(data))
+
 if __name__ == '__main__':
-    upload_data_to_s3('20200329-181955.csv', 'test.csv')
+    contents = list_data_on_s3()
+    data = download_file_from_s3(contents[0])
+    df = pd.read_csv(BytesIO(data))
+    print(df.head())
