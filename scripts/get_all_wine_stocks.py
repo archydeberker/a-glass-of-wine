@@ -15,7 +15,7 @@ def get_wine_pool(id):
 
 
 def get_wine_pool_all_stores(id):
-    stock_array = saq.get_per_store_stock(id)
+    stock_array = saq.get_per_store_stock(id, max_stores=400)
     # print(f"Finished for {id}")
     return {'id': id, 'stock': stock_array}
 
@@ -31,21 +31,6 @@ def get_products(q, page):
     q.put((names, ids))
 
 
-def get_all_online_wine_ids(base_url='https://www.saq.com/en/products/wine?availability=Online&p=1'):
-    total_wines = 1183
-    wines_per_page = 24
-    pages = np.ceil(total_wines/wines_per_page)
-
-    wine_names = []
-    wine_ids = []
-
-    for p in range(int(pages)):
-        names, ids = saq.parse_product_list(base_url + f'&p={p}')
-        wine_names.extend(names), wine_ids.extend(ids)
-
-    return wine_names, wine_ids
-
-
 def load_from_cache_or_get_wine_ids(cache_path='./wine_list.pkl'):
 
     try:
@@ -55,7 +40,7 @@ def load_from_cache_or_get_wine_ids(cache_path='./wine_list.pkl'):
         wine_names, wine_ids = zip(pkl)
 
     except FileNotFoundError:
-        wine_names, wine_ids = get_all_online_wine_ids()
+        wine_names, wine_ids = saq.get_all_online_wine_ids()
 
         with open(cache_path, 'wb') as f:
             pickle.dump(zip(wine_names, wine_ids), f)
@@ -67,38 +52,15 @@ if __name__ == '__main__':
 
     # TODO cache this
     print('Fetching all pages')
-    wine_names, wine_ids = get_all_online_wine_ids()
+    wine_names, wine_ids, wine_imgs = saq.get_all_online_wine_ids()
 
     # Short list for debugging
-    # wine_names, wine_ids = saq.parse_product_list('https://www.saq.com/en/products/wine/red-wine')
+    # wine_names, wine_ids, wine_imgs = saq.parse_product_list('https://www.saq.com/en/products/wine/red-wine')
 
     wine_name_dict = {id: name for id, name in zip(wine_ids, wine_names)}
+    wine_img_dict = {id: img for id, img in zip(wine_ids, wine_imgs)}
+    # Get the stock for Online
 
-    # Now we have all the products, get the stock per store
-    print('Beginning multiprocessing')
-
-    p = Pool(cpu_count())
-    result = p.map(get_wine_pool_all_stores, wine_ids)
-    p.close()
-    p.join()
-
-    print('Finished multiprocessing')
-
-    df = pd.DataFrame(result)
-    df['wine_name'] = df['id'].map(wine_name_dict)
-
-    df.set_index('wine_name', inplace=True)
-    now = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-
-    print('Uploading to S3')
-    # For now we save to CSV locally, and upload to S3
-    filepath = f'./all_stores_{now}.csv'
-    df.to_csv(filepath)
-    storage.upload_data_to_s3(filepath, filepath.lstrip('./'))
-
-    # and for online
-
-    # Now we have all the products, get the stock per store
     print('Beginning multiprocessing online')
 
     p = Pool(cpu_count())
@@ -110,6 +72,7 @@ if __name__ == '__main__':
 
     df = pd.DataFrame(result)
     df['wine_name'] = df['id'].map(wine_name_dict)
+    df['wine_img'] = df['id'].map(wine_img_dict)
 
     df.set_index('wine_name', inplace=True)
     now = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -119,3 +82,27 @@ if __name__ == '__main__':
     filepath = f'./{now}.csv'
     df.to_csv(filepath)
     storage.upload_data_to_s3(filepath, filepath.lstrip('./'))
+
+    # Get the stock per store
+    print('Beginning multiprocessing')
+
+    p = Pool(cpu_count())
+    result = p.map(get_wine_pool_all_stores, wine_ids)
+    p.close()
+    p.join()
+
+    print('Finished multiprocessing')
+
+    df = pd.DataFrame(result)
+    df['wine_name'] = df['id'].map(wine_name_dict)
+    df['wine_img'] = df['id'].map(wine_img_dict)
+
+    df.set_index('wine_name', inplace=True)
+    now = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+
+    print('Uploading to S3')
+    # For now we save to CSV locally, and upload to S3
+    filepath = f'./all_stores_{now}.csv'
+    df.to_csv(filepath)
+    storage.upload_data_to_s3(filepath, filepath.lstrip('./'))
+

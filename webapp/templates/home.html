@@ -83,7 +83,7 @@
         </div>
         <div class="column">
             <figure class="image is-centered is-square">
-                <img src="/static/assets/images/quebec.svg" style="width:80%" }>
+                <img src="/static/assets/images/quebec.svg" style="width:80%">
             </figure>
         </div>
         <div>
@@ -98,8 +98,9 @@
     <div class="columns" style="padding-top: 50px">
         {% for wine in top_wines %}
         <div class="column has-text-centered">
-            <h1 class="subtitle">{{wine.name}}</h1>
+            <h1 class="subtitle" style="min-height: 4em">{{wine.name}}</h1>
             <figure> <img src={{wine.img}}> </figure>
+            <h1 class="subtitle">{{wine.sales}} bottles</h1>
         </div>
         {% endfor %}
     </div>
