@@ -28,12 +28,10 @@ class Wine:
         return img_url
 
 
+# TODO: how do we refresh this guy? Better save something light to disk
 counter = StockCounter()
-#
-# @app.route('/refresh')
-# def refresh_stock():
-#     counter = StockCounter()
-#
+
+
 @app.route('/')
 def upload_page():
     top_wines = counter.stock_change_df.iloc[:5]
