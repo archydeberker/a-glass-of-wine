@@ -35,35 +35,33 @@ class StockDataFetcher:
         # refreshed
         if datetime.datetime.now() - self.last_refreshed > self.refresh_interval:
             print('Refreshing wine data from S3')
-            self._counter.__init__()
+            self._counter.__init__(use_cached=True)
 
         return self._counter
 
 
 class StockCounter:
     def __init__(self, use_cached=False):
-        self.files = data.storage.list_data_on_s3()
-        print(f"Found {len(self.files)} files on S3")
-        self.online_files = list(filter(lambda x: bool(re.match(constants.ONLINE_FILE_REGEX, x)), self.files))
-
-        if not use_cached:
-            print(f"{len(self.online_files)} of those were for online stock")
-            self.online_df = self.load_online_data()
-        else:
-            self.online_df = data.storage.get_s3_data_to_df(self._latest_cache_file(),
+        if use_cached:
+            cache_files = sorted(data.storage.list_data_on_s3(Prefix='online_data'))
+            print(f'Using cached files {cache_files[-1]}')
+            self.online_df = data.storage.get_s3_data_to_df(cache_files[-1],
                                                             parse_dates=['timestamp'],
                                                             dtype={'wine_name': 'object',
                                                                    'id': 'int64',
                                                                    'stock': 'int64',
                                                                    'timestamp': 'str',
                                                                    'wine_img': 'str'})
+        else:
+            self.files = data.storage.list_data_on_s3()
+            print(f"Found {len(self.files)} files on S3")
+            self.online_files = list(filter(lambda x: bool(re.match(constants.ONLINE_FILE_REGEX, x)), self.files))
+
+            print(f"{len(self.online_files)} of those were for online stock")
+            self.online_df = self.load_online_data()
 
         print('Getting stock change df')
         self.stock_change_df = self.get_daily_stock_change_df()
-
-    def _latest_cache_file(self):
-        cache_files = sorted(list(filter(lambda x: bool(re.match(constants.ONLINE_CACHE_REGEX, x)), self.files)))
-        return cache_files[-1]
 
     def load_online_data(self):
         all_data = []

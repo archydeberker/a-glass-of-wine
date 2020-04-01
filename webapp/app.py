@@ -6,7 +6,7 @@ from webapp.api.wine import Wine, StockCounter, StockDataFetcher
 app = Flask(__name__)
 
 stock = StockDataFetcher(counter=StockCounter(use_cached=True),
-                         refresh_interval=datetime.timedelta(minutes=1))
+                         refresh_interval=datetime.timedelta(hours=1))
 
 
 @app.route('/')

@@ -40,9 +40,9 @@ def download_file_from_s3(filename):
     return content
 
 
-def list_data_on_s3(bucket=constants.S3_BUCKET_NAME):
+def list_data_on_s3(bucket=constants.S3_BUCKET_NAME, **kwargs):
     s3_client = _configure_s3_client()
-    return [key['Key'] for key in s3_client.list_objects(Bucket=bucket)['Contents']]
+    return [key['Key'] for key in s3_client.list_objects(Bucket=bucket, **kwargs)['Contents']]
 
 
 def get_s3_data_to_df(filename, **kwargs):
