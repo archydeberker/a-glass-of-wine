@@ -40,7 +40,7 @@ def load_from_cache_or_get_wine_ids(cache_path='./wine_list.pkl'):
         wine_names, wine_ids = zip(pkl)
 
     except FileNotFoundError:
-        wine_names, wine_ids = saq.get_all_online_wine_ids()
+        wine_names, wine_ids = saq.get_all_online_wines()
 
         with open(cache_path, 'wb') as f:
             pickle.dump(zip(wine_names, wine_ids), f)
@@ -48,31 +48,30 @@ def load_from_cache_or_get_wine_ids(cache_path='./wine_list.pkl'):
     return wine_names, wine_ids
 
 
-if __name__ == '__main__':
+def _add_metadata(df, products):
+    df['wine_name'] = df['id'].map({p.id: p.name for p in products})
+    df['wine_img'] = df['id'].map({p.id: p.img for p in products})
+    df['wine_type'] = df['id'].map({p.id: p.type for p in products})
+    df['wine_origin'] = df['id'].map({p.id: p.origin for p in products})
 
-    # TODO cache this
-    print('Fetching all pages')
-    wine_names, wine_ids, wine_imgs = saq.get_all_online_wine_ids()
+    return df
 
-    # Short list for debugging
-    # wine_names, wine_ids, wine_imgs = saq.parse_product_list('https://www.saq.com/en/products/wine/red-wine')
 
-    wine_name_dict = {id: name for id, name in zip(wine_ids, wine_names)}
-    wine_img_dict = {id: img for id, img in zip(wine_ids, wine_imgs)}
+def update_df_for_online_stock(products):
+
     # Get the stock for Online
-
     print('Beginning multiprocessing online')
 
     p = Pool(cpu_count())
-    result = p.map(get_wine_pool, wine_ids)
+    result = p.map(get_wine_pool, [p.id for p in products])
     p.close()
     p.join()
 
     print('Finished multiprocessing')
 
     df = pd.DataFrame(result)
-    df['wine_name'] = df['id'].map(wine_name_dict)
-    df['wine_img'] = df['id'].map(wine_img_dict)
+
+    df = _add_metadata(df, products)
 
     df.set_index('wine_name', inplace=True)
     now = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -83,19 +82,21 @@ if __name__ == '__main__':
     df.to_csv(filepath)
     storage.upload_data_to_s3(filepath, filepath.lstrip('./'))
 
+
+def update_df_for_instore_stock(products):
     # Get the stock per store
     print('Beginning multiprocessing')
 
     p = Pool(cpu_count())
-    result = p.map(get_wine_pool_all_stores, wine_ids)
+    result = p.map(get_wine_pool_all_stores, [p.id for p in products])
     p.close()
     p.join()
 
     print('Finished multiprocessing')
 
     df = pd.DataFrame(result)
-    df['wine_name'] = df['id'].map(wine_name_dict)
-    df['wine_img'] = df['id'].map(wine_img_dict)
+
+    df = _add_metadata(df, products)
 
     df.set_index('wine_name', inplace=True)
     now = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -105,4 +106,18 @@ if __name__ == '__main__':
     filepath = f'./all_stores_{now}.csv'
     df.to_csv(filepath)
     storage.upload_data_to_s3(filepath, filepath.lstrip('./'))
+
+
+if __name__ == '__main__':
+    # TODO cache this
+    print('Fetching all pages')
+    products = saq.get_all_online_wines()
+
+    # Short list for debugging
+    # products = saq.parse_product_list('https://www.saq.com/en/products/wine/red-wine')
+
+    update_df_for_online_stock(products)
+    # update_df_for_instore_stock()
+
+
 

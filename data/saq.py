@@ -84,7 +84,7 @@ def get_stock_from_id(product_id):
 
 
 def get_soup(url):
-    return BeautifulSoup(requests.get(url).content)
+    return BeautifulSoup(requests.get(url).content, 'html.parser')
 
 
 class ListItem:
@@ -100,12 +100,17 @@ class ListItem:
         return self.c.find('div', {'product'}).attrs['data-product-id']
 
     @property
-    def url(self):
+    def img(self):
         return self.c.find('span', {'class': 'product-image-wrapper'}).find('img').attrs['src']
 
     @property
     def type(self):
         return self.c.find('strong', {'class': 'product-item-identity-format'}).findChildren('span')[0].contents[0].strip()
+
+    @property
+    def origin(self):
+        return self.c.find('strong', {'class': 'product-item-identity-format'}).findChildren('span')[0].contents[
+            -1].strip()
 
 
 def parse_product_list(product_list_url):
@@ -113,40 +118,37 @@ def parse_product_list(product_list_url):
     wine_soup = get_soup(product_list_url)
     list_items = wine_soup.find('ol', {'class': 'product-items'})
     children = list_items.findChildren('li', {'class': 'item product product-item'})
-    product_ids, product_names, product_images, product_types = [], [], [], []
+    products = []
     for c in children:
-        product = ListItem(c)
-        product_names.append(product.name)
-        product_ids.append(product.id)
-        product_images.append(product.url)
-        product_types.append(product.type)
+        products.append(ListItem(c))
 
-    return product_names, product_ids, product_images, product_types
+    return products
 
 
 def _get_total_number_of_wines(url):
-    soup = get_soup(url, 'html.parser')
+    soup = get_soup(url)
     return int(soup.find_all('span', {'class': 'toolbar-number'})[-1].contents[0])
 
 
-def get_all_online_wine_ids(base_url='https://www.saq.com/en/products/wine?availability=Online'):
-    #TODO this should not be hardcoded
+def get_all_online_wines(base_url='https://www.saq.com/en/products/wine?availability=Online'):
     total_wines = _get_total_number_of_wines(base_url)
     wines_per_page = 24
     pages = np.ceil(total_wines/wines_per_page)
 
-    wine_names, wine_ids, wine_imgs, wine_types = [], [], [], []
-
+    products = []
     for p in range(int(pages)):
-        names, ids, images, types = parse_product_list(base_url + f'&p={p}')
-        wine_names.extend(names), wine_ids.extend(ids), wine_imgs.extend(images), wine_types.extend(types)
+        products_on_page = parse_product_list(base_url + f'&p={p}')
+        products.extend(products_on_page)
 
-    return wine_names, wine_ids, wine_imgs, wine_types
+    return products
 
 
 def get_stock_for_top_red_wines(limit=-1):
     output_list = []
-    red_wine_names, red_wine_ids, red_wine_imgs, _ = parse_product_list('https://www.saq.com/en/products/wine/red-wine?product_list_limit=96')
+    products = parse_product_list('https://www.saq.com/en/products/wine/red-wine?product_list_limit=96')
+    red_wine_ids = [p.id for p in products]
+    red_wine_names = [p.name for p in products]
+
     for wine in red_wine_ids[:limit]:
         out = {'id': wine}
         stock = get_stock_from_id(wine)
@@ -159,8 +161,6 @@ def get_stock_for_top_red_wines(limit=-1):
 
 if __name__ == '__main__':
 
-    names, ids, images, types = get_all_online_wine_ids()
-    print(names)
-    print(images)
-    print(len(ids))
-    print(types)
+    products = get_all_online_wines()
+
+    print(products[:10])
