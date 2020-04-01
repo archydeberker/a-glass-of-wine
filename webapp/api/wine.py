@@ -4,7 +4,7 @@ import re
 import pandas as pd
 
 import data.storage
-from data import constants as constants
+import constants as constants
 from data.analysis import parse_timestamp_from_filename
 
 
@@ -114,3 +114,13 @@ class StockCounter:
     @property
     def glasses_sold(self):
         return abs(self._negative_stock_change(self.stock_change_df)['stock_change'].sum() * constants.GLASSES_IN_A_BOTTLE)
+
+    @property
+    def sales_by_wine_type(self):
+        _df = self.stock_change_df.copy()
+        _df.dropna(inplace=True, subset=['wine_type_now'])
+        _df = _df.groupby('wine_type_now').sum()
+        return {'red': _df.loc['Red wine']['stock_change'],
+                  'white': _df.loc['White wine']['stock_change'],
+                  'rose': _df.loc['Rosé']['stock_change'],
+                  }

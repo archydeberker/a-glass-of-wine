@@ -37,14 +37,26 @@
 <div class="container">
     <div class="columns is-8 is-variable">
         <div class="column">
-            <h2 class="subtitle is-size-3"> But what are we drinking? </h2>
+            <h2 class="subtitle is-size-3"> What is Quebec drinking? </h2>
             <p class="is-family-sans-serif">
                 We've been looking at the the stock in SAQ, to see what
                 people across Quebec have been drinking to keep their spirits up.
             </p>
             <br>
-            <h3 class="title is-5"> Consumption of red wine</h3>
 
+            <div class="columns">
+                <div style="width:{{red_percentage}}%; height:20px; background-color:{{red}}; border-radius: {{radius}}; margin:10px"></div>
+                <div style="width:{{white_percentage}}%; height:20px; background-color:{{white}}; border-radius: {{radius}}; margin:10px"></div>
+                <div style="width:{{rose_percentage}}%; height:20px; background-color:{{rose}}; border-radius: {{radius}}; margin:10px"></div>
+            </div>
+            <div class="columns is-family-sans-serif">
+                <div style="width:{{red_percentage}}%; height:20px; margin:10px">{{red_percentage}}%</div>
+                <div style="width:{{white_percentage}}%; height:20px; margin:10px">{{white_percentage}}%</div>
+                <div style="width:{{rose_percentage}}%; height:20px; margin:10px">{{rose_percentage}}%</div>
+            </div>
+
+            <h3 class="title is-5"> Consumption of red wine</h3>
+            {% include "elements/percentages.html" %}
             <div class="columns">
                 <div class="column is-1">
                 <span class="icon is-large" style="color:green">

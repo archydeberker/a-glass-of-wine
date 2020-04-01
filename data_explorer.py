@@ -30,6 +30,15 @@ _df.dropna(inplace=True, subset=['wine_type_now'])
 fig = px.bar(_df, x='wine_type_now', y='stock_change')
 st.write(fig)
 
+_df = counter.stock_change_df.copy()
+_df.dropna(inplace=True, subset=['wine_type_now'])
+_df = _df.groupby('wine_type_now').sum()
+st.write(_df)
+st.write({'red': _df.loc['Red wine']['stock_change'],
+        'white': _df.loc['White wine']['stock_change'],
+        'rose': _df.loc['Rosé']['stock_change'],
+        })
+
 
 country_df = counter.stock_change_df.groupby('wine_origin_now').sum()
 country_df['country'] = country_df.index

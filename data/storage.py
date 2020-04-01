@@ -1,6 +1,6 @@
 import boto3
 from botocore.exceptions import ClientError
-from data import constants
+import constants
 from io import BytesIO
 import pandas as pd
 
