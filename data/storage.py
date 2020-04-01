@@ -45,9 +45,10 @@ def list_data_on_s3(bucket=constants.S3_BUCKET_NAME):
     return [key['Key'] for key in s3_client.list_objects(Bucket=bucket)['Contents']]
 
 
-def get_s3_data_to_df(filename):
+def get_s3_data_to_df(filename, **kwargs):
     data = download_file_from_s3(filename)
-    return pd.read_csv(BytesIO(data))
+    return pd.read_csv(BytesIO(data), **kwargs)
+
 
 if __name__ == '__main__':
     contents = list_data_on_s3()

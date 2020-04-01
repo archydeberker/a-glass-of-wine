@@ -1,72 +1,6 @@
 import datetime
-import re
 
-import data.constants as constants
-import data.storage
 import pandas as pd
-
-
-class StockCounter:
-    def __init__(self):
-        self.files = data.storage.list_data_on_s3()
-        print(f"Found {len(self.files)} files on S3")
-        self.online_files = list(filter(lambda x: bool(re.match(constants.ONLINE_FILE_REGEX, x)), self.files))
-        print(f"{len(self.online_files)} of those were for online stock")
-        self.online_df = self.load_online_data()
-        print('Getting stock change df')
-        self.stock_change_df = self.get_daily_stock_change_df()
-
-    def load_online_data(self):
-        all_data = []
-        for file in self.online_files:
-            print(file)
-            df = data.storage.get_s3_data_to_df(file)
-            df['timestamp'] = parse_timestamp_from_filename(file)
-            all_data.append(df)
-
-        return pd.concat(all_data)
-
-    def get_daily_stock_change_df(self):
-        df = self.online_df
-        now = datetime.datetime.now()
-        one_day_ago = now - datetime.timedelta(days=1)
-
-        most_recent = self.online_df['timestamp'].max()
-        closest_to_one_day_ago = self.online_df['timestamp'].iloc[abs(one_day_ago - self.online_df['timestamp']).argmin()]
-
-        stock_1_day_ago_df = df.loc[df['timestamp'] == closest_to_one_day_ago]
-
-        stock_change_df = self.online_df.loc[self.online_df['timestamp'] == most_recent].copy()
-
-        # Care required on the join. Use a right join so that all wines that were in stock 1 day
-        # ago appear in the list
-        stock_change_df.set_index('id', inplace=True)
-        stock_1_day_ago_df.set_index('id', inplace=True)
-
-        stock_change_df = stock_change_df.join(stock_1_day_ago_df, how='right', lsuffix='_now', rsuffix='_1_day_ago')
-
-        stock_change_df.drop(['wine_name_now', 'wine_img_now'], axis=1, inplace=True)
-        stock_change_df.rename({'wine_name_1_day_ago': 'wine_name',
-                                'wine_img_1_day_ago': 'wine_img'}, inplace=True, axis=1)
-
-        # Assume if a wine dropped out of the stock list it was sold out
-        stock_change_df['stock_now'].fillna(0)
-
-        stock_change_df['stock_change'] = stock_change_df['stock_now'] - stock_change_df['stock_1_day_ago']
-        stock_change_df.sort_values(by='stock_change', inplace=True)
-
-        return stock_change_df
-
-    def _negative_stock_change(self, df):
-        return self.stock_change_df.loc[self.stock_change_df['stock_change'] <= 0]
-
-    @property
-    def bottles_sold(self):
-        return abs(self._negative_stock_change(self.stock_change_df)['stock_change'].sum())
-
-    @property
-    def glasses_sold(self):
-        return abs(self._negative_stock_change(self.stock_change_df)['stock_change'].sum() * constants.GLASSES_IN_A_BOTTLE)
 
 
 def parse_timestamp_from_filename(filename, strformat="%Y%m%d-%H%M%S", suffix='.csv'):
@@ -111,7 +45,3 @@ def generate_consumption_df(df):
 
 def plot_all_wine_over_time():
     pass
-
-
-if __name__ == '__main__':
-    counter = StockCounter()
