@@ -3,6 +3,7 @@ import streamlit as st
 import webapp.api.wine
 from data import analysis
 import plotly.express as px
+import constants
 
 
 @st.cache
@@ -35,10 +36,9 @@ _df.dropna(inplace=True, subset=['wine_type_now'])
 _df = _df.groupby('wine_type_now').sum()
 st.write(_df)
 st.write({'red': _df.loc['Red wine']['stock_change'],
-        'white': _df.loc['White wine']['stock_change'],
-        'rose': _df.loc['Rosé']['stock_change'],
-        })
-
+          'white': _df.loc['White wine']['stock_change'],
+          'rose': _df.loc['Rosé']['stock_change'],
+          })
 
 country_df = counter.stock_change_df.groupby('wine_origin_now').sum()
 country_df['country'] = country_df.index
@@ -49,21 +49,22 @@ df = px.data.gapminder().query("year==2007")
 df = df[['country', 'iso_alpha']]
 df.set_index('country', inplace=True)
 country_df = country_df.join(df, rsuffix='_')
+country_df['color'] = constants.Colours.red
 st.write(country_df)
 fig = px.scatter_geo(country_df,
-                    locations="iso_alpha",
-                    size="stock_change",
-                    hover_name="country",
-                    color_continuous_scale=px.colors.sequential.Plasma)
+                     locations="iso_alpha",
+                     size="stock_change",
+                     hover_name="country",
+                     color='color')
 
 fig.update_layout(
 
-        geo = dict(
-            landcolor='rgb(240, 240, 240)',
-            showframe=False,
-            coastlinecolor= 'white',
-        )
+    geo=dict(
+        landcolor='rgb(240, 240, 240)',
+        showframe=False,
+        coastlinecolor='white',
     )
+)
 st.write(fig)
 
 fig = px.line(filter_df(counter.online_df, wine_names), x='timestamp', y='stock', color='wine_name')
@@ -71,8 +72,6 @@ st.write(fig)
 
 st.write(filter_df(counter.online_df, wine_names))
 st.write(filter_df(counter.stock_change_df, wine_names))
-
-
 
 st.header('By colour')
 fig = px.area(counter.online_df, x='timestamp', y='stock_change', color='wine_type_now')

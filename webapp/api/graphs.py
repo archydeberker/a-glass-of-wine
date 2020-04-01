@@ -4,27 +4,27 @@ import numpy as np
 import plotly
 from plotly import graph_objects as go
 import plotly.express as px
-
+from constants import Colours
 
 def map_wines(counter):
 
     country_df = counter.stock_change_df.groupby('wine_origin_now').sum()
     country_df['country'] = country_df.index
-    country_df['stock_change'] = abs(country_df['stock_change'])
+    country_df['Bottles Sold Today'] = abs(country_df['stock_change'])
 
     # Use this to get country information
     df = px.data.gapminder().query("year==2007")
     df = df[['country', 'iso_alpha']]
+    # df['color'] = Colours.red
     df.set_index('country', inplace=True)
     country_df = country_df.join(df, rsuffix='_')
     fig = px.scatter_geo(country_df,
                          locations="iso_alpha",
-                         size="stock_change",
+                         size="Bottles Sold Today",
                          hover_name="country",
-                         color_continuous_scale=px.colors.sequential.Plasma)
+                         hover_data=["Bottles Sold Today"])
 
     fig.update_layout(
-
         geo=dict(
             landcolor='rgb(240, 240, 240)',
             showframe=False,
