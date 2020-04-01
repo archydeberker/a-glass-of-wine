@@ -437,7 +437,7 @@ table th {
 }
 
 .is-size-2 {
-  font-size: 2.5rem !important;
+  font-size: 1rem !important;
 }
 
 .is-size-3 {
@@ -452,7 +452,7 @@ table th {
   font-size: 1.25rem !important;
 }
 
-.is-size-6 {
+.is-size-2 {
   font-size: 1rem !important;
 }
 
@@ -466,7 +466,7 @@ table th {
   }
 
   .is-size-2-mobile {
-    font-size: 2.5rem !important;
+    font-size: 1rem !important;
   }
 
   .is-size-3-mobile {
@@ -481,7 +481,7 @@ table th {
     font-size: 1.25rem !important;
   }
 
-  .is-size-6-mobile {
+  .is-size-2-mobile {
     font-size: 1rem !important;
   }
 
@@ -495,7 +495,7 @@ table th {
   }
 
   .is-size-2-tablet {
-    font-size: 2.5rem !important;
+    font-size: 1rem !important;
   }
 
   .is-size-3-tablet {
@@ -510,7 +510,7 @@ table th {
     font-size: 1.25rem !important;
   }
 
-  .is-size-6-tablet {
+  .is-size-2-tablet {
     font-size: 1rem !important;
   }
 
@@ -524,7 +524,7 @@ table th {
   }
 
   .is-size-2-touch {
-    font-size: 2.5rem !important;
+    font-size: 1rem !important;
   }
 
   .is-size-3-touch {
@@ -539,7 +539,7 @@ table th {
     font-size: 1.25rem !important;
   }
 
-  .is-size-6-touch {
+  .is-size-2-touch {
     font-size: 1rem !important;
   }
 
@@ -553,7 +553,7 @@ table th {
   }
 
   .is-size-2-desktop {
-    font-size: 2.5rem !important;
+    font-size: 1rem !important;
   }
 
   .is-size-3-desktop {
@@ -568,7 +568,7 @@ table th {
     font-size: 1.25rem !important;
   }
 
-  .is-size-6-desktop {
+  .is-size-2-desktop {
     font-size: 1rem !important;
   }
 
@@ -582,7 +582,7 @@ table th {
   }
 
   .is-size-2-widescreen {
-    font-size: 2.5rem !important;
+    font-size: 1rem !important;
   }
 
   .is-size-3-widescreen {
@@ -597,7 +597,7 @@ table th {
     font-size: 1.25rem !important;
   }
 
-  .is-size-6-widescreen {
+  .is-size-2-widescreen {
     font-size: 1rem !important;
   }
 
@@ -611,7 +611,7 @@ table th {
   }
 
   .is-size-2-fullhd {
-    font-size: 2.5rem !important;
+    font-size: 1rem !important;
   }
 
   .is-size-3-fullhd {
@@ -626,7 +626,7 @@ table th {
     font-size: 1.25rem !important;
   }
 
-  .is-size-6-fullhd {
+  .is-size-2-fullhd {
     font-size: 1rem !important;
   }
 
@@ -3547,7 +3547,7 @@ a.tag:hover {
   font-size: 3rem;
 }
 .title.is-2 {
-  font-size: 2.5rem;
+  font-size: 1rem;
 }
 .title.is-3 {
   font-size: 2rem;
@@ -3558,7 +3558,7 @@ a.tag:hover {
 .title.is-5 {
   font-size: 1.25rem;
 }
-.title.is-6 {
+.title.is-2 {
   font-size: 1rem;
 }
 .title.is-7 {
@@ -3582,7 +3582,7 @@ a.tag:hover {
   font-size: 3rem;
 }
 .subtitle.is-2 {
-  font-size: 2.5rem;
+  font-size: 1rem;
 }
 .subtitle.is-3 {
   font-size: 2rem;
@@ -3593,7 +3593,7 @@ a.tag:hover {
 .subtitle.is-5 {
   font-size: 1.25rem;
 }
-.subtitle.is-6 {
+.subtitle.is-2 {
   font-size: 1rem;
 }
 .subtitle.is-7 {

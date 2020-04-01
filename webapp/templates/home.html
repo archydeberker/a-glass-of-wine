@@ -6,7 +6,18 @@
     <title>A Glass of Wine May Help</title>
     <link rel="stylesheet" href="/static/assets/css/mystyles.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-
+    <style type="text/css">
+        .header{
+            text-align: center;
+            background-color: rgb(136, 185, 229);
+            height: 70px;
+            line-height: 70px;
+        }
+        .chart{
+            margin-top: 30px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 
@@ -16,34 +27,49 @@
             <div class="columns is-centered">
                 <div class="column is-whole">
                     <p class="bd-notification is-primary">
-                    <h3 class="h4 has-text-centered is-family-sans-serif">
-                        DAY <span class="has-text-weight-bold"> 12 </span>OF ISOLATION
-                    </h3>
                 </div>
             </div>
             <div class="columns is-centered">
-                <div class="column is-one-quarter">
-                    <h1 class="title has-text-centered is-size-1 is-family-serif has-text-weight-medium">
-                        A Glass of Wine May Help
-                    </h1>
+                <div class="column has-text-centered is-narrow-desktop is-narrow-touch">
+                    <figure class="image is-centered ">
+                        <img src="/static/assets/images/quebec.svg" style="width:80%; max-width: 500px; margin-top:-100px">
+                        <div class="is-overlay" style="margin-top:40px">
+                            <h3 class="is-size-5 has-text-centered is-family-sans-serif" style="margin-top: 10%">
+                                DAY <span class="has-text-weight-bold"> 12 </span>OF ISOLATION
+                            </h3>
+                            <h1 class=" has-text-centered is-size-1 is-family-serif has-text-weight-medium">
+                                A Glass of Wine May Help
+                            </h1>
+                        </div>
+                    </figure>
+
                 </div>
             </div>
         </div>
+        <hr class="hr" style="height: 4px; background-color:black; margin-left: 10%;  margin-right: 10%; margin-top: 50px">
     </div>
-    </div>
-    </div>
+
 </section>
 
-<div class="container">
-    <div class="columns is-8 is-variable">
-        <div class="column">
+
+<div class="container is-centered is-fluid">
+    <div class="columns is-centered">
+        <div class="column is-one-fifth">
             <h2 class="subtitle is-size-3"> What is Quebec drinking? </h2>
+        </div>
+        <div class="column is-one-fifth">
             <p class="is-family-sans-serif">
-                We've been looking at the the stock in SAQ, to see what
-                people across Quebec have been drinking to keep their spirits up.
+                We've been looking at the the stock in SAQ, to see how people have
+                been following Legault's recommendations.
             </p>
             <br>
-
+        </div>
+    </div>
+    <div class="columns is-centered">
+        <div class="column has-text-centered is-family-sans-serif"> Are we guzzling more red, white, or rosé? </div>
+    </div>
+    <div class="columns is-centered">
+        <div class="column has-text-centered is-two-fifths">
             <div class="columns">
                 <div style="width:{{red_percentage}}%; height:20px; background-color:{{red}}; border-radius: {{radius}}; margin:10px"></div>
                 <div style="width:{{white_percentage}}%; height:20px; background-color:{{white}}; border-radius: {{radius}}; margin:10px"></div>
@@ -54,68 +80,35 @@
                 <div style="width:{{white_percentage}}%; height:20px; margin:10px">{{white_percentage}}%</div>
                 <div style="width:{{rose_percentage}}%; height:20px; margin:10px">{{rose_percentage}}%</div>
             </div>
-
-            <h3 class="title is-5"> Consumption of red wine</h3>
-            {% include "elements/percentages.html" %}
-            <div class="columns">
-                <div class="column is-1">
-                <span class="icon is-large" style="color:green">
-                <i class="fas fa-caret-up fa-lg red"></i>
-                </span>
-                </div>
-                <div class="column ">
-                    <h1 class="subtitle is-size-2"> 43%</h1>
-                </div>
-            </div>
-
-            <h3 class="title is-5"> Consumption of white wine</h3>
-            <div class="columns">
-                <div class="column is-1">
-                <span class="icon is-large" style="color:green">
-                <i class="fas fa-caret-up fa-lg red"></i>
-                </span>
-                </div>
-                <div class="column ">
-                    <h1 class="subtitle is-size-2"> 33%</h1>
-                </div>
-            </div>
-
-            <h3 class="title is-5"> Consumption of rosé</h3>
-            <div class="columns">
-                <div class="column is-1">
-                <span class="icon is-large" style="color:green">
-                <i class="fas fa-caret-up fa-lg red"></i>
-                </span>
-                </div>
-                <div class="column ">
-                    <h1 class="subtitle is-size-2"> 12%</h1>
-                </div>
-            </div>
-
-        </div>
-        <div class="column">
-            <figure class="image is-centered is-square">
-                <img src="/static/assets/images/quebec.svg" style="width:80%">
-            </figure>
         </div>
         <div>
-
         </div>
     </div>
 </div>
 
-<section class="container">
-<hr class="hr" >
-
+<section class="container is-fluid">
+     <div class="columns is-centered">
+        <div class="column has-text-centered subtitle is-one-quarter is-size-3" style="margin-top:30px; color: black">
+            Well! Here are the trending bottles in Quebec
+        </div>
+    </div>
     <div class="columns" style="padding-top: 50px">
         {% for wine in top_wines %}
         <div class="column has-text-centered">
-            <h1 class="subtitle" style="min-height: 4em">{{wine.name}}</h1>
-            <figure> <img src={{wine.img}}> </figure>
-            <h1 class="subtitle">{{wine.sales}} bottles</h1>
+            <figure><img src={{wine.img}}></figure>
+            <h1 class="is-family-sans-serif is-size-9 has-text-weight-bold" style="min-height: 5em">{{wine.name}}</h1>
+            <h1 class="is-family-sans-serif" style="color: gray">{{wine.sales}} bottles</h1>
         </div>
         {% endfor %}
     </div>
+</section>
+
+<section class="container" style="padding-top: 50px">
+<div><h1 class="has-text-centered subtitle is-size-3">We might be isolated, but we're drinking wines from all over!</h1>
+<div id="chart" class="chart">
+
+</div>
+</div>
 </section>
 <section style="padding-top: 50px">
     <!--    <footer class="footer" style="bottom: 0; width: 100%; padding-bottom: 20px; ">-->
@@ -134,4 +127,19 @@
     </div>
 </section>
 </body>
+
+<!-- D3.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <script type="text/javascript">
+
+        var graphs = {{graphJSON | safe}};
+
+        Plotly.plot('chart',graphs,{});
+
+    </script>
+
 </html>

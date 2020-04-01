@@ -1,6 +1,8 @@
 import datetime
 
 from flask import Flask, render_template
+
+from webapp.api.graphs import map_wines
 from webapp.api.wine import Wine, StockCounter, StockDataFetcher
 from constants import Colours
 
@@ -26,8 +28,9 @@ def upload_page():
                            red=Colours.red,
                            white=Colours.white,
                            rose=Colours.rose,
-                           radius='50px')
+                           radius='50px',
+                           graphJSON=map_wines(stock.counter))
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5001)

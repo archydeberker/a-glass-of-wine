@@ -50,12 +50,20 @@ df = df[['country', 'iso_alpha']]
 df.set_index('country', inplace=True)
 country_df = country_df.join(df, rsuffix='_')
 st.write(country_df)
-fig = px.choropleth(country_df,
+fig = px.scatter_geo(country_df,
                     locations="iso_alpha",
-                    color="stock_change",
+                    size="stock_change",
                     hover_name="country",
                     color_continuous_scale=px.colors.sequential.Plasma)
 
+fig.update_layout(
+
+        geo = dict(
+            landcolor='rgb(240, 240, 240)',
+            showframe=False,
+            coastlinecolor= 'white',
+        )
+    )
 st.write(fig)
 
 fig = px.line(filter_df(counter.online_df, wine_names), x='timestamp', y='stock', color='wine_name')
