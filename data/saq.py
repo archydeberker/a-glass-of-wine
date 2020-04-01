@@ -56,7 +56,7 @@ def get_per_store_stock(product_id, max_stores=MAX_STORES):
 def fetch_alternative_product_id(original_product_id):
     """This is a time consuming operation whereby we use the URL product ID to fetch the true product ID"""
     page = requests.get(f'https://www.saq.com/en/{original_product_id}')
-    soup = BeautifulSoup(page.content)
+    soup = BeautifulSoup(page.content, 'html.parser')
     ret = soup.find('div', {'class': 'price-box'})
     product_id = int(ret.attrs['data-product-id'])
     return product_id
