@@ -6,25 +6,37 @@ from plotly import graph_objects as go
 import plotly.express as px
 from constants import Colours
 
-def map_wines(counter):
 
-    country_df = counter.stock_change_df.groupby('wine_origin_now').sum()
-    country_df['country'] = country_df.index
-    country_df['Bottles Sold Today'] = abs(country_df['stock_change'])
+def map_wines(counter):
+    country_df = counter.stock_change_df.groupby(['wine_origin_now', 'wine_type_now']).sum().reset_index()
+    country_df['stock_change'] = abs(country_df['stock_change'])
 
     # Use this to get country information
     df = px.data.gapminder().query("year==2007")
     df = df[['country', 'iso_alpha']]
-    # df['color'] = Colours.red
     df.set_index('country', inplace=True)
+    country_df.set_index('wine_origin_now', inplace=True)
     country_df = country_df.join(df, rsuffix='_')
+    country_df = country_df.reset_index()
+
+    # Renaming to make the plot look nicer
+    country_df.rename({'wine_type_now': 'Type',
+                       'stock_change': 'Bottles Sold',
+                       'iso_alpha': 'Country'},
+                        inplace=True, axis=1)
+
     fig = px.scatter_geo(country_df,
-                         locations="iso_alpha",
-                         size="Bottles Sold Today",
-                         hover_name="country",
-                         hover_data=["Bottles Sold Today"])
+                         locations="Country",
+                         size="Bottles Sold",
+                         hover_name="index",
+                         color='Type',
+                         color_discrete_sequence=[Colours.red,
+                                                  Colours.white,
+                                                  Colours.rose,
+                                                  ])
 
     fig.update_layout(
+
         geo=dict(
             landcolor='rgb(240, 240, 240)',
             showframe=False,

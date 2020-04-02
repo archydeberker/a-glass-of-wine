@@ -40,22 +40,27 @@ st.write({'red': _df.loc['Red wine']['stock_change'],
           'rose': _df.loc['Rosé']['stock_change'],
           })
 
-country_df = counter.stock_change_df.groupby('wine_origin_now').sum()
-country_df['country'] = country_df.index
+# Wine origin graph
+country_df = counter.stock_change_df.groupby(['wine_origin_now', 'wine_type_now']).sum().reset_index()
 country_df['stock_change'] = abs(country_df['stock_change'])
 
 # Use this to get country information
 df = px.data.gapminder().query("year==2007")
 df = df[['country', 'iso_alpha']]
 df.set_index('country', inplace=True)
+country_df.set_index('wine_origin_now', inplace=True)
 country_df = country_df.join(df, rsuffix='_')
-country_df['color'] = constants.Colours.red
+country_df = country_df.reset_index()
 st.write(country_df)
 fig = px.scatter_geo(country_df,
                      locations="iso_alpha",
                      size="stock_change",
-                     hover_name="country",
-                     color='color')
+                     hover_name="index",
+                     color='wine_type_now',
+                     color_discrete_sequence=[constants.Colours.red,
+                                              constants.Colours.white,
+                                              constants.Colours.rose,
+                                              ])
 
 fig.update_layout(
 
@@ -74,5 +79,7 @@ st.write(filter_df(counter.online_df, wine_names))
 st.write(filter_df(counter.stock_change_df, wine_names))
 
 st.header('By colour')
-fig = px.area(counter.online_df, x='timestamp', y='stock_change', color='wine_type_now')
-# st.header('By origin')
+_new_data = counter.online_df.dropna(subset=['wine_type']).groupby(['timestamp', 'wine_type']).sum().reset_index()
+st.write(_new_data)
+fig = px.area(_new_data, x='timestamp', y='stock', color='wine_type', template="plotly_white")
+st.write(fig)
