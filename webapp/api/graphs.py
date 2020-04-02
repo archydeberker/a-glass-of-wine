@@ -41,7 +41,8 @@ def map_wines(counter):
             landcolor='rgb(240, 240, 240)',
             showframe=False,
             coastlinecolor='white',
-        )
+        ),
+        showlegend=False,
     )
 
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
