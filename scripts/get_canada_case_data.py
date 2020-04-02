@@ -3,7 +3,8 @@ import tempfile
 
 import pandas as pd
 import requests
-download_url = 'https://docs.google.com/spreadsheets/d/1D6okqtBS3S2NRC7GFVHzaZ67DuTw7LX49-fqSLwJyeo/export?format=xlsx'
+
+from constants import CASE_DOWNLOAD_URL
 
 
 def filter_for_quebec(df):
@@ -11,7 +12,7 @@ def filter_for_quebec(df):
 
 
 def main():
-    download = requests.get(download_url)
+    download = requests.get(CASE_DOWNLOAD_URL)
     now = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     filepath = f"canada_case_data_{now}.csv"
 

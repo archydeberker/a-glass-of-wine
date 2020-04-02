@@ -17,6 +17,9 @@
             margin-top: 30px;
             text-align: center;
         }
+
+
+
     </style>
 </head>
 <body>
@@ -32,7 +35,8 @@
             <div class="columns is-centered">
                 <div class="column has-text-centered is-narrow-desktop is-narrow-touch">
                     <figure class="image is-centered ">
-                        <img src="/static/assets/images/quebec.svg" style="width:80%; max-width: 500px; margin-top:-100px">
+                        <img src="/static/assets/images/quebec.svg"
+                             style="width:80%; max-width: 500px; margin-top:-100px">
                         <div class="is-overlay" style="margin-top:40px">
                             <h3 class="is-size-5 has-text-centered is-family-sans-serif" style="margin-top: 10%">
                                 DAY <span class="has-text-weight-bold"> 12 </span>OF ISOLATION
@@ -46,7 +50,8 @@
                 </div>
             </div>
         </div>
-        <hr class="hr" style="height: 4px; background-color:black; margin-left: 10%;  margin-right: 10%; margin-top: 50px">
+        <hr class="hr"
+            style="height: 4px; background-color:black; margin-left: 10%;  margin-right: 10%; margin-top: 50px">
     </div>
 
 </section>
@@ -66,80 +71,102 @@
         </div>
     </div>
     <div class="columns is-centered">
-        <div class="column has-text-centered is-family-sans-serif"> Are we guzzling more red, white, or rosé? </div>
+        <div class="column has-text-centered is-family-sans-serif"> Are we guzzling more red, white, or rosé?</div>
     </div>
     <div class="columns is-centered">
-        <div class="column has-text-centered is-two-fifths">
-            <div class="columns">
-                <div style="width:{{red_percentage}}%; height:20px; background-color:{{red}}; border-radius: {{radius}}; margin:10px"></div>
-                <div style="width:{{white_percentage}}%; height:20px; background-color:{{white}}; border-radius: {{radius}}; margin:10px"></div>
-                <div style="width:{{rose_percentage}}%; height:20px; background-color:{{rose}}; border-radius: {{radius}}; margin:10px"></div>
+        <div class="column has-text-centered is-two-fifths is-family-sans-serif">
+            <div class="columns is-centered">
+                <div class="column is-narrow" >
+                    <div class="columns ">
+                        <div style="width:{{red_percentage*0.5}}vw; height:20px; background-color:{{red}}; border-radius: {{radius}}; margin:5px"></div>
+                    </div>
+                    <div style="width:{{red_percentage*0.5}}vw; height:20px; margin:10px">{{red_percentage}}%</div>
+                </div>
+                <div class="column is-narrow">
+                    <div class="columns">
+                        <div style="width:{{white_percentage*0.5}}vw; height:20px; background-color:{{white}}; border-radius: {{radius}}; margin:5px"></div>
+                    </div>
+                    <div style="width:{{white_percentage*0.5}}vw; height:20px; margin:10px">{{white_percentage}}%</div>
+                </div>
+                <div class="column is-narrow">
+                    <div class="columns">
+                        <div style="width:{{rose_percentage*0.5}}vw; height:20px; background-color:{{rose}}; border-radius: {{radius}}; margin:5px"></div>
+                    </div>
+                        <div style="width:{{rose_percentage*0.5}}vw; height:20px; margin:10px">{{rose_percentage}}%</div>
+                    </div>
+                </div>
+
             </div>
-            <div class="columns is-family-sans-serif">
-                <div style="width:{{red_percentage}}%; height:20px; margin:10px">{{red_percentage}}%</div>
-                <div style="width:{{white_percentage}}%; height:20px; margin:10px">{{white_percentage}}%</div>
-                <div style="width:{{rose_percentage}}%; height:20px; margin:10px">{{rose_percentage}}%</div>
+            <div>
+                <div>
+                </div>
             </div>
         </div>
-        <div>
+    </div>
+
+    <section class="container is-fluid">
+        <div class="columns is-centered">
+            <div class="column has-text-centered subtitle is-one-quarter is-size-3"
+                 style="margin-top:30px; color: black">
+                Well! Here are the trending bottles in Quebec
+            </div>
         </div>
-    </div>
-</div>
-
-<section class="container is-fluid">
-     <div class="columns is-centered">
-        <div class="column has-text-centered subtitle is-one-quarter is-size-3" style="margin-top:30px; color: black">
-            Well! Here are the trending bottles in Quebec
+        <div class="columns" style="padding-top: 50px">
+            {% for wine in top_wines %}
+            <div class="column has-text-centered">
+                <figure><img src={{wine.img}}></figure>
+                <h1 class="is-family-sans-serif is-size-9 has-text-weight-bold" style="min-height: 5em">
+                    {{wine.name}}</h1>
+                <h1 class="is-family-sans-serif" style="color: gray">{{wine.sales}} bottles today</h1>
+            </div>
+            {% endfor %}
         </div>
-    </div>
-    <div class="columns" style="padding-top: 50px">
-        {% for wine in top_wines %}
-        <div class="column has-text-centered">
-            <figure><img src={{wine.img}}></figure>
-            <h1 class="is-family-sans-serif is-size-9 has-text-weight-bold" style="min-height: 5em">{{wine.name}}</h1>
-            <h1 class="is-family-sans-serif" style="color: gray">{{wine.sales}} bottles today</h1>
+    </section>
+
+    <section class="container" style="padding-top: 50px">
+        <div><h1 class="has-text-centered subtitle is-size-3">We might be isolated, but we're drinking wines from
+            all
+            over!</h1>
+            <div id="chart" class="chart">
+
+            </div>
         </div>
-        {% endfor %}
-    </div>
-</section>
-
-<section class="container" style="padding-top: 50px">
-<div><h1 class="has-text-centered subtitle is-size-3">We might be isolated, but we're drinking wines from all over!</h1>
-<div id="chart" class="chart">
-
-</div>
-</div>
-</section>
-<section style="padding-top: 50px">
-    <!--    <footer class="footer" style="bottom: 0; width: 100%; padding-bottom: 20px; ">-->
-    <div class='has-text-centered'>
-        <figure class='image'>
-            <a href="https://github.com/archydeberker/a-glass-of-wine"><img
-                    src='/static/assets/images/GitHub-Mark-32px.png'
-                    style="margin: 0 auto; width: auto; margin-bottom: 10px"></a>
-        </figure>
-    </div>
-    <div class="content has-text-centered">
-        <strong>A Glass of Wine May Help </strong> is made by
-        <a href=""> Archy de Berker </a> and <a href=""> Claudel Rheault</a>.
-
-        <p> Let us know if you'd like to have a (virtual) drink! </p>
-    </div>
-</section>
+    </section>
+    <section style="padding-top: 50px">
+        <!--    <footer class="footer" style="bottom: 0; width: 100%; padding-bottom: 20px; ">-->
+        <div class='has-text-centered'>
+            <figure class='image'>
+                <a href="https://github.com/archydeberker/a-glass-of-wine"><img
+                        src='/static/assets/images/GitHub-Mark-32px.png'
+                        style="margin: 0 auto; width: auto; margin-bottom: 10px"></a>
+            </figure>
+        </div>
+        <div class="content has-text-centered">
+            <strong>A Glass of Wine May Help </strong> is made by
+            <a href=""> Archy de Berker </a> and <a href=""> Claudel Rheault</a> with help from
+            <a href=""> Stephanie Willis</a>.
+            <p> Let us know if you'd like to have a (virtual) drink! </p>
+            <p> COVID-19 case data from </p>
+            <p class="is-size-9">{{data_citation}}</p>
+        </div>
+    </section>
 </body>
 
 <!-- D3.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
-    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <!-- Plotly.js -->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<!-- Plotly.js -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
         var graphs = {{graphJSON | safe}};
 
         Plotly.plot('chart',graphs,{});
 
-    </script>
+
+
+
+</script>
 
 </html>

@@ -4,7 +4,7 @@ from flask import Flask, render_template
 
 from webapp.api.graphs import map_wines
 from webapp.api.wine import Wine, StockCounter, StockDataFetcher
-from constants import Colours
+from constants import Colours, CASE_CITATION
 
 app = Flask(__name__)
 
@@ -20,6 +20,7 @@ def upload_page():
     percentages = {k: int(v/total_sales*100) for k, v in sales.items()}
 
     wines = [Wine(row.wine_name, row.wine_img, row.stock_change) for i, row in top_wines.iterrows()]
+
     return render_template('home.html',
                            top_wines=wines,
                            red_percentage=percentages['red'],
@@ -29,7 +30,8 @@ def upload_page():
                            white=Colours.white,
                            rose=Colours.rose,
                            radius='50px',
-                           graphJSON=map_wines(stock.counter))
+                           graphJSON=map_wines(stock.counter),
+                           data_citation=CASE_CITATION)
 
 
 if __name__ == "__main__":

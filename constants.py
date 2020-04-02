@@ -13,3 +13,12 @@ class Colours:
     red = '#7f0000'
     white = '#fff8e1'
     rose = '#ffcdd2'
+
+
+CASE_DOWNLOAD_URL = 'https://docs.google.com/spreadsheets/d/1D6okqtBS3S2NRC7GFVHzaZ67DuTw7LX49-fqSLwJyeo/export?format=xlsx'
+ACCESS_DATE = 'April 1st 2020'
+CASE_CITATION = f"""
+                COVID-19 Canada Open Data Working Group. 
+                Epidemiological Data from the COVID-19 Outbreak in Canada. 
+                https://github.com/ishaberry/Covid19Canada. ({ACCESS_DATE}).					
+				"""
