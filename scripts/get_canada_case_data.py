@@ -53,7 +53,10 @@ def create_cases_df_for_quebec(path_to_download):
     cols = ['status', 'cum_value', 'date']
     df = pd.concat([cases_agg_df[cols], deaths_agg_df[cols], recovered_df[cols]])
 
-    return df
+    # later - subtract recovered and deaths from cases
+    df_shortform = df.set_index(['date', 'status'])['cum_value'].unstack(fill_value=0)
+
+    return df_shortform
 
 
 if __name__ == '__main__':
