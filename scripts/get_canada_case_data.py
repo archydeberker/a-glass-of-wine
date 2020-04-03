@@ -62,9 +62,8 @@ def create_cases_df_for_quebec(path_to_download):
 if __name__ == '__main__':
     filename = 'download.xlsx'
     # filename = download_data(download_url=DOWNLOAD_URL, download_name=filename)
-    now = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
-    filepath = f"canada_case_data_{now}.csv"
+    filepath = "canada_case_data.csv"
     df = create_cases_df_for_quebec(filename)
 
     df.to_csv(filepath)
