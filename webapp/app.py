@@ -3,7 +3,7 @@ import datetime
 from flask import Flask, render_template
 
 from webapp.api.graphs import map_wines
-from webapp.api.wine import Wine, StockCounter, StockDataFetcher
+from webapp.api.wine import Wine, StockCounter, StockDataFetcher, glasses_sold_yesterday
 from constants import Colours, CASE_CITATION
 
 app = Flask(__name__)
@@ -23,6 +23,7 @@ def upload_page():
 
     return render_template('home.html',
                            top_wines=wines,
+                           glasses_sold=glasses_sold_yesterday(stock.counter.stock_change_df),
                            red_percentage=percentages['red'],
                            white_percentage=percentages['white'],
                            rose_percentage=percentages['rose'],

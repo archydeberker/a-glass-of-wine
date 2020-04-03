@@ -4,8 +4,13 @@ import re
 import pandas as pd
 
 import data.storage
-import constants as constants
+import constants
 from data.analysis import parse_timestamp_from_filename
+
+
+def glasses_sold_yesterday(stock_change_df):
+    total_bottles_sold = stock_change_df['stock_change'].sum()
+    return f"{abs(int(total_bottles_sold * constants.GLASSES_IN_A_BOTTLE)):,}"
 
 
 class Wine:
