@@ -91,4 +91,5 @@ def plot_cases(df):
         plot_bgcolor='rgba(0,0,0,0)'
     )
     fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='Grey')
-    fig.show()
+    case_graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    return case_graphJSON
