@@ -26,8 +26,8 @@ class Wine:
 
 
 class StockCounter:
-    def __init__(self, use_cached=False):
-        if use_cached:
+    def __init__(self, use_cached=False, local_path=None):
+        if use_cached and not local_path:
             cache_files = sorted(data.storage.list_data_on_s3(Prefix='online_data'))
             print(f'Using cached files {cache_files[-1]}')
             self.online_df = data.storage.get_s3_data_to_df(cache_files[-1],
@@ -36,7 +36,9 @@ class StockCounter:
                                                                    'id': 'int64',
                                                                    'stock': 'int64',
                                                                    'timestamp': 'str',
-                                                                   'wine_img': 'str'})
+                                                               'wine_img': 'str'})
+        elif local_path:
+            self.online_df = pd.read_csv(local_path, parse_dates=['timestamp'])
         else:
             self.files = data.storage.list_data_on_s3()
             print(f"Found {len(self.files)} files on S3")

@@ -9,11 +9,14 @@ from constants import DOWNLOAD_URL
 
 
 class CaseData:
-    def __init__(self, use_cached=True):
-        if use_cached:
+    def __init__(self, use_cached=True, local_path=None):
+        if use_cached and not local_path:
             cache_files = sorted(data.storage.list_data_on_s3(Prefix=constants.CASE_DATA_CSV))
             print(f'Using cached files {cache_files[-1]}')
-            self.case_df = data.storage.get_s3_data_to_df(cache_files[-1])
+            self.case_df = data.storage.get_s3_data_to_df(cache_files[-1],
+                                                          parse_dates=['date'])
+        elif local_path:
+            self.case_df = pd.read_csv(local_path, parse_dates=['date'])
         else:
             with tempfile.NamedTemporaryFile as temp:
                 filename = download_data(download_url=DOWNLOAD_URL, download_name=temp.name)
@@ -70,6 +73,6 @@ def create_cases_df_for_quebec(path_to_download):
     df = pd.concat([cases_agg_df[cols], deaths_agg_df[cols], recovered_df[cols]])
 
     # later - subtract recovered and deaths from cases
-    df_shortform = df.set_index(['date', 'status'])['cum_value'].unstack(fill_value=0)
+    df_shortform = df.set_index(['date', 'status'])['cum_value'].unstack(fill_value=0).reset_index()
 
     return df_shortform

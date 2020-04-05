@@ -1,12 +1,10 @@
 import json
-import datetime
-
-import pandas as pd
 import numpy as np
 import plotly
 from plotly import graph_objects as go
 import plotly.express as px
-from constants import Colours
+import datetime
+import pandas as pd
 
 
 def map_wines(counter):
@@ -42,6 +40,7 @@ def map_wines(counter):
 
 def plot_cases(df):
 
+    df = df.loc[df['date'] > pd.Timestamp(datetime.date(year=2020, month=3, day=22))]
     # move to constants and import?
     colors = {'hospitalized': 'rgba(232, 230, 235,1)',
               'recovered': 'rgba(112, 55, 71,1)',
@@ -53,7 +52,7 @@ def plot_cases(df):
 
     for case_type in case_types:
         fig.add_trace(go.Scatter(
-            x=df.index,
+            x=df.date,
             y=df[case_type],
             hoverinfo='x+y',
             mode='lines',
@@ -64,16 +63,12 @@ def plot_cases(df):
         ))
 
     fig.update_layout(
-        title={
-            'text': "Our curve",
-            'y': 0.9,
-            'x': 0.05,
-            'xanchor': 'left',
-            'yanchor': 'top'},
         paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)'
+        plot_bgcolor='rgba(0,0,0,0)',
+        legend_orientation='h',
+        legend=dict(x=-.1, y=1.2),
     )
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='Grey')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(200,200,200,0.51)')
 
     case_graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 

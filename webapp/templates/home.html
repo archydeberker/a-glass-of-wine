@@ -44,8 +44,7 @@
                 </div>
             </div>
         </div>
-        <hr class="hr"
-            style="height: 4px; background-color:black; margin-left: 10%;  margin-right: 10%; margin-top: 50px">
+        <hr class="hr" style="height: 4px; background-color:black; margin-left: 10%;  margin-right: 10%; margin-top: 50px">
     </div>
 
 </section>
@@ -128,11 +127,21 @@
         <div><h1 class="has-text-centered subtitle is-size-3">We might be isolated, but we're drinking wines from
             all
             over!</h1>
-            <div id="chart" class="chart">
-
+            <div id="wine_map" class="chart">
             </div>
         </div>
     </section>
+
+<hr class="hr" style="height: 4px; background-color:black; margin-left: 10%;  margin-right: 10%; margin-top: 50px">
+
+<div class="container" style="padding-top: 50px">
+    <div class="columns is-centered">
+        <div class="column is-two-thirds is-narrow">
+            <h1 class="subtitle is-size-3"> Since we started drinking our wine</h1>
+            <div id="case_graph"></div>
+        </div>
+        </div>
+</div>
     <section style="padding-top: 50px">
         <!--    <footer class="footer" style="bottom: 0; width: 100%; padding-bottom: 20px; ">-->
         <div class='has-text-centered'>
@@ -161,8 +170,10 @@
 <script type="text/javascript">
 
         var graphs = {{graphJSON | safe}};
+        var case_graphs = {{case_graphJSON | safe}};
 
-        Plotly.plot('chart',graphs,{});
+        Plotly.plot('wine_map',graphs,{});
+        Plotly.plot('case_graph',case_graphs,{});
 
 </script>
 
