@@ -25,26 +25,6 @@ class Wine:
         return img_url
 
 
-class StockDataFetcher:
-    """
-    A wrapper around a stock counter which controls refreshing
-    """
-    def __init__(self, counter, refresh_interval=datetime.timedelta(hours=1)):
-        self._counter = counter
-        self.last_refreshed = datetime.datetime.now()
-        self.refresh_interval = refresh_interval
-
-    @property
-    def counter(self):
-        # TODO can we make this asynchronous, experience will suck when this is
-        # refreshed
-        if datetime.datetime.now() - self.last_refreshed > self.refresh_interval:
-            print('Refreshing wine data from S3')
-            self._counter.__init__(use_cached=True)
-
-        return self._counter
-
-
 class StockCounter:
     def __init__(self, use_cached=False):
         if use_cached:

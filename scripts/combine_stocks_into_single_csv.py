@@ -1,8 +1,6 @@
-
-import datetime
-
 from webapp.api import wine
 from data.storage import upload_data_to_s3
+from constants import ONLINE_DATA_CSV
 
 
 def main():
@@ -10,9 +8,9 @@ def main():
     Combine all existing S3 data into a single CSV and upload it
     """
     counter = wine.StockCounter()
-    filepath = f"online_data_latest.csv"
-    counter.online_df.to_csv(filepath)
-    upload_data_to_s3(filepath, filepath.lstrip('./'))
+
+    counter.online_df.to_csv(ONLINE_DATA_CSV)
+    upload_data_to_s3(ONLINE_DATA_CSV, ONLINE_DATA_CSV.lstrip('./'))
 
 
 if __name__ == '__main__':

@@ -40,25 +40,6 @@ def map_wines(counter):
     return graphJSON
 
 
-def example_graph():
-    # Method from https://code.tutsplus.com/tutorials/charting-using-plotly-in-python--cms-30286
-
-    count = 500
-    xScale = np.linspace(0, 100, count)
-    yScale = np.random.randn(count)
-
-    # Create a trace
-    trace = go.Scatter(
-        x=xScale,
-        y=yScale
-    )
-
-    data = [trace]
-    graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
-
-    return graphJSON
-
-
 def plot_cases(df):
 
     # move to constants and import?
@@ -69,9 +50,11 @@ def plot_cases(df):
     case_types = ['deaths', 'recovered', 'cases']
 
     fig = go.Figure()
+
     for case_type in case_types:
         fig.add_trace(go.Scatter(
-            x=df.index, y=df[case_type],
+            x=df.index,
+            y=df[case_type],
             hoverinfo='x+y',
             mode='lines',
             line=dict(width=0.5, color=colors[case_type]),
@@ -91,5 +74,26 @@ def plot_cases(df):
         plot_bgcolor='rgba(0,0,0,0)'
     )
     fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='Grey')
+
     case_graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
     return case_graphJSON
+
+
+def example_graph():
+    # Method from https://code.tutsplus.com/tutorials/charting-using-plotly-in-python--cms-30286
+
+    count = 500
+    xScale = np.linspace(0, 100, count)
+    yScale = np.random.randn(count)
+
+    # Create a trace
+    trace = go.Scatter(
+        x=xScale,
+        y=yScale
+    )
+
+    data = [trace]
+    graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
+
+    return graphJSON
