@@ -1,5 +1,5 @@
 import json
-import numpy as np
+from constants import Colours
 import plotly
 from plotly import graph_objects as go
 import plotly.express as px
@@ -24,7 +24,8 @@ def map_wines(counter):
                          locations="iso_alpha",
                          size="Bottles Sold Today",
                          hover_name="country",
-                         hover_data=["Bottles Sold Today"])
+                         hover_data=["Bottles Sold Today"],
+                         color_discrete_sequence=[Colours.red])
 
     fig.update_layout(
         geo=dict(
