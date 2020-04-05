@@ -40,7 +40,7 @@ def map_wines(counter):
     return graphJSON
 
 
-def plot_cases(df):
+def plot_cases(df, return_fig=False):
 
     df = df.loc[df['date'] > pd.Timestamp(datetime.date(year=2020, month=3, day=22))]
     # move to constants and import?
@@ -71,6 +71,9 @@ def plot_cases(df):
         legend=dict(x=-.1, y=1.2),
     )
     fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(200,200,200,0.51)')
+
+    if return_fig:
+        return fig
 
     case_graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 

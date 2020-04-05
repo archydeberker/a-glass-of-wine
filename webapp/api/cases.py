@@ -44,7 +44,7 @@ def aggregate_df(df):
     return agg_df
 
 
-def create_cases_df_for_quebec(path_to_download):
+def create_cases_df_for_quebec(path_to_download, wideform=True):
     """Create a long-style dataframe"""
 
     cases_df = pd.read_excel(path_to_download, header=3)
