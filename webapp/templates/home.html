@@ -107,6 +107,8 @@
 <div><h1 class="has-text-centered subtitle is-size-3">We might be isolated, but we're drinking wines from all over!</h1>
 <div id="chart" class="chart">
 
+<div id="chart_cases" class="chart">
+
 </div>
 </div>
 </section>
@@ -139,6 +141,10 @@
         var graphs = {{graphJSON | safe}};
 
         Plotly.plot('chart',graphs,{});
+
+        var cases = {{case_graphJSON | safe}};
+
+        Plotly.plot('chart_cases',cases,{});
 
     </script>
 

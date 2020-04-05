@@ -61,7 +61,7 @@ def create_cases_df_for_quebec(path_to_download):
 
 if __name__ == '__main__':
     filename = 'download.xlsx'
-    # filename = download_data(download_url=DOWNLOAD_URL, download_name=filename)
+    filename = download_data(download_url=DOWNLOAD_URL, download_name=filename)
 
     filepath = "canada_case_data.csv"
     df = create_cases_df_for_quebec(filename)
