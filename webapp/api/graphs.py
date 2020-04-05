@@ -1,5 +1,7 @@
 import json
+import datetime
 
+import pandas as pd
 import numpy as np
 import plotly
 from plotly import graph_objects as go
@@ -8,41 +10,29 @@ from constants import Colours
 
 
 def map_wines(counter):
-    country_df = counter.stock_change_df.groupby(['wine_origin_now', 'wine_type_now']).sum().reset_index()
-    country_df['stock_change'] = abs(country_df['stock_change'])
+
+    country_df = counter.stock_change_df.groupby('wine_origin_now').sum()
+    country_df['country'] = country_df.index
+    country_df['Bottles Sold Today'] = abs(country_df['stock_change'])
 
     # Use this to get country information
     df = px.data.gapminder().query("year==2007")
     df = df[['country', 'iso_alpha']]
+    # df['color'] = Colours.red
     df.set_index('country', inplace=True)
-    country_df.set_index('wine_origin_now', inplace=True)
     country_df = country_df.join(df, rsuffix='_')
-    country_df = country_df.reset_index()
-
-    # Renaming to make the plot look nicer
-    country_df.rename({'wine_type_now': 'Type',
-                       'stock_change': 'Bottles Sold',
-                       'iso_alpha': 'Country'},
-                        inplace=True, axis=1)
-
     fig = px.scatter_geo(country_df,
-                         locations="Country",
-                         size="Bottles Sold",
-                         hover_name="index",
-                         color='Type',
-                         color_discrete_sequence=[Colours.red,
-                                                  Colours.white,
-                                                  Colours.rose,
-                                                  ])
+                         locations="iso_alpha",
+                         size="Bottles Sold Today",
+                         hover_name="country",
+                         hover_data=["Bottles Sold Today"])
 
     fig.update_layout(
-
         geo=dict(
             landcolor='rgb(240, 240, 240)',
             showframe=False,
             coastlinecolor='white',
-        ),
-        showlegend=False,
+        )
     )
 
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
@@ -67,3 +57,39 @@ def example_graph():
     graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
 
     return graphJSON
+
+
+def plot_cases(df):
+
+    # move to constants and import?
+    colors = {'hospitalized': 'rgba(232, 230, 235,1)',
+              'recovered': 'rgba(112, 55, 71,1)',
+              'cases': 'rgba(211, 176, 245,1)',
+              'deaths': 'rgba(0, 0, 0,1)'}
+    case_types = ['deaths', 'recovered', 'cases']
+
+    fig = go.Figure()
+    for case_type in case_types:
+        fig.add_trace(go.Scatter(
+            x=df.index, y=df[case_type],
+            hoverinfo='x+y',
+            mode='lines',
+            line=dict(width=0.5, color=colors[case_type]),
+            fillcolor=colors[case_type],
+            stackgroup='one',
+            name=case_type
+        ))
+
+    fig.update_layout(
+        title={
+            'text': "Our curve",
+            'y': 0.9,
+            'x': 0.05,
+            'xanchor': 'left',
+            'yanchor': 'top'},
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)'
+    )
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='Grey')
+    case_graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    return case_graphJSON
