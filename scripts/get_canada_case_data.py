@@ -5,6 +5,7 @@ import pandas as pd
 import requests
 
 from constants import CASE_DOWNLOAD_URL
+from data import storage
 
 
 def filter_for_quebec(df):
@@ -48,6 +49,10 @@ def create_cases_df_for_quebec(path_to_download, outpath):
     df = pd.concat([cases_df[cols], deaths_df[cols], recovered_df[cols]])
 
     df.to_csv(outpath)
+
+    filepath = 'latest_case_data.csv'
+    storage.upload_data_to_s3(outpath, filepath.lstrip('./'))
+
 
 
 if __name__ == '__main__':

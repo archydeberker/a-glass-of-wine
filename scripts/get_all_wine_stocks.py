@@ -102,6 +102,7 @@ def update_df_for_instore_stock(products):
     now = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
     print('Uploading to S3')
+
     # For now we save to CSV locally, and upload to S3
     filepath = f'./all_stores_{now}.csv'
     df.to_csv(filepath)

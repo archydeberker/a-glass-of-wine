@@ -107,6 +107,9 @@ class StockCounter:
         stock_change_df['stock_change'] = stock_change_df['stock_now'] - stock_change_df['stock_1_day_ago']
         stock_change_df.sort_values(by='stock_change', inplace=True)
 
+        # Drop duplicates
+        stock_change_df.drop_duplicates(subset=['wine_name'], inplace=True)
+
         return stock_change_df
 
     def _negative_stock_change(self, df):
