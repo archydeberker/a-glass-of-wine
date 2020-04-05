@@ -23,3 +23,20 @@ CASE_DATA_CSV = "canada_case_data_latest.csv"
 ONLINE_DATA_CSV = f"online_data_latest.csv"
 
 DOWNLOAD_URL = 'https://docs.google.com/spreadsheets/d/1D6okqtBS3S2NRC7GFVHzaZ67DuTw7LX49-fqSLwJyeo/export?format=xlsx'
+COUNTRY_API_IDS = {'Canada': 36, 'Italy': 137, 'South Korea': 143,
+                'Hubei': 62, 'France': 116, 'Quebec': 44, 'US': 225,
+                'Alberta': 35,
+                'British Columbia': 36,
+                'Manitoba': 38,
+                'New Brunswick': 39,
+                'Newfoundland & Labrador': 40,
+                'Nova Scotia': 41,
+                'Ontario': 42,
+                'PEI': 43,
+                'Saskatchewan': 45,
+                'Yukon': 256,
+                   }
+CASE_API_URL = ' https://coronavirus-tracker-api.herokuapp.com/v2/locations'
+COUNTRIES_TO_GRAPH = ['Italy', 'Hubei', 'South Korea',
+                                             'US', 'Quebec', 'British Columbia',
+                                             'Ontario', 'Alberta']

@@ -1,10 +1,17 @@
 import json
+
+import numpy as np
+
 from constants import Colours
 import plotly
-from plotly import graph_objects as go
+from plotly import graph_objects as go, express as px
 import plotly.express as px
 import datetime
 import pandas as pd
+
+
+def encode_as_json(fig):
+    return json.dumps(fig, cls = plotly.utils.PlotlyJSONEncoder)
 
 
 def map_wines(counter):
@@ -78,3 +85,57 @@ def plot_cases(df, return_fig=False):
     case_graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
     return case_graphJSON
+
+
+def plot_log_daily(df, status, x_axis='days_since_3', y_axis='rolling_daily_count', log=True,
+                   x_axis_title=None, y_axis_title=None):
+    df.reset_index()
+
+    # Get rid of data before day 0
+    df = df.loc[df[x_axis] >= 0]
+    df = df.loc[df['status'] == status]
+
+    colors = 4*['rgba(0,0,0,.2)',
+                ] + ['rgba(127,0,0,.9)',
+                     'rgba(0,0,50,.5)',
+                     'rgba(0,0,50,.5)',
+                     'rgba(0,0,50,.5)']
+
+    font_colors = 4*['rgba(0,0,0,.6)',
+                ] + ['rgba(127,0,0,1)',
+                     'rgba(0,0,50,.6)',
+                     'rgba(0,0,50,.6)',
+                     'rgba(0,0,50,.6)']
+
+    fig = px.line(df,
+                  x=x_axis,
+                  y=y_axis,
+                  color='country',
+                  template='plotly_white',
+                  color_discrete_sequence=colors)
+
+    for i, country in enumerate(df.country.unique()):
+        last_row = df.loc[df['country'] == country].iloc[-1]
+        fig.add_annotation(x=last_row[x_axis],
+                           y=np.log10(last_row[y_axis]) if log else last_row[y_axis],
+                           xanchor="left",
+                           text=country,
+                           font=dict(
+                               color=font_colors[i],
+                               size=13,
+                           ))
+
+    if log:
+        fig.update_layout(yaxis_type="log", showlegend=False)
+
+    fig.update_layout(xaxis_title=x_axis_title or x_axis,
+                      yaxis_title=y_axis_title or y_axis,
+                      )
+
+    fig.update_annotations(dict(
+        xref="x",
+        yref="y",
+        showarrow=False,
+    ))
+
+    return fig

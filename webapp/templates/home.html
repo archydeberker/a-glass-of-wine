@@ -142,6 +142,21 @@
         </div>
         </div>
 </div>
+<div class="container" style="padding-top: 50px">
+    <div class="columns is-centered">
+        <div class="column is-two-thirds is-narrow">
+            <h1 class="subtitle is-size-3"> Here's how we're doing relative to everyone else</h1>
+            <div id="confirmed_graph"></div>
+        </div>
+        </div>
+</div>
+<div class="container" style="padding-top: 50px">
+    <div class="columns is-centered">
+        <div class="column is-two-thirds is-narrow">
+            <div id="deaths_graph"></div>
+        </div>
+        </div>
+</div>
     <section style="padding-top: 50px">
         <!--    <footer class="footer" style="bottom: 0; width: 100%; padding-bottom: 20px; ">-->
         <div class='has-text-centered'>
@@ -171,9 +186,13 @@
 
         var graphs = {{graphJSON | safe}};
         var case_graphs = {{case_graphJSON | safe}};
+        var confirmed_graph = {{confirmed_graphJSON | safe}};
+        var deaths_graph = {{deaths_graphJSON | safe}};
 
         Plotly.plot('wine_map',graphs,{});
-        Plotly.plot('case_graph',case_graphs,{});
+        Plotly.plot('case_graph', case_graphs,{});
+        Plotly.plot('confirmed_graph', confirmed_graph,{});
+        Plotly.plot('deaths_graph', deaths_graph,{});
 
 </script>
 

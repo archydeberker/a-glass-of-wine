@@ -2,10 +2,10 @@ import datetime
 
 from flask import Flask, render_template
 
-from webapp.api.graphs import map_wines, plot_cases
+from webapp.api.graphs import map_wines, plot_cases, plot_log_daily, encode_as_json
 from webapp.api.wine import Wine, StockCounter, glasses_sold_yesterday
 from webapp.api.utils import DataFetcher
-from webapp.api.cases import CaseData
+from webapp.api.cases import CaseData, get_cases_from_api
 from constants import Colours, CASE_CITATION
 import os
 
@@ -30,6 +30,14 @@ def upload_page():
     percentages = {k: int(v/total_sales*100) for k, v in sales.items()}
 
     wines = [Wine(row.wine_name, row.wine_img, row.stock_change) for i, row in top_wines.iterrows()]
+    international_cases_df = get_cases_from_api()
+
+    confirmed = plot_log_daily(international_cases_df, 'confirmed', x_axis='days_since_30',
+                               x_axis_title='Days since 30 cases',
+                               y_axis_title='Daily confirmed cases (smoothed)')
+    deaths = plot_log_daily(international_cases_df, 'deaths', x_axis='days_since_3',
+                            x_axis_title='Days since 3 deaths',
+                            y_axis_title='Daily deaths (smoothed)')
 
     return render_template('home.html',
                            top_wines=wines,
@@ -43,6 +51,8 @@ def upload_page():
                            radius='50px',
                            graphJSON=map_wines(stock.latest_data),
                            case_graphJSON=plot_cases(cases.latest_data.case_df),
+                           confirmed_graphJSON=encode_as_json(confirmed),
+                           deaths_graphJSON=encode_as_json(deaths),
                            data_citation=CASE_CITATION)
 
 

@@ -1,11 +1,14 @@
 import tempfile
 
+import numpy as np
 import pandas as pd
 import requests
+import streamlit as st
 
 import constants
 import data.storage
-from constants import DOWNLOAD_URL
+
+from functools import lru_cache
 
 
 class CaseData:
@@ -19,7 +22,7 @@ class CaseData:
             self.case_df = pd.read_csv(local_path, parse_dates=['date'])
         else:
             with tempfile.NamedTemporaryFile as temp:
-                filename = download_data(download_url=DOWNLOAD_URL, download_name=temp.name)
+                filename = download_data(download_url=constants.DOWNLOAD_URL, download_name=temp.name)
                 df = create_cases_df_for_quebec(filename)
 
             self.case_df = df
@@ -29,7 +32,7 @@ def filter_for_quebec(df):
     return df.loc[df['province'] == 'Quebec']
 
 
-def download_data(download_url=DOWNLOAD_URL, download_name='download.xlsx'):
+def download_data(download_url=constants.DOWNLOAD_URL, download_name='download.xlsx'):
     download = requests.get(download_url)
     with open(download_name, 'wb') as f:
         f.write(download.content)
@@ -76,3 +79,52 @@ def create_cases_df_for_quebec(path_to_download, wideform=True):
     df_shortform = df.set_index(['date', 'status'])['cum_value'].unstack(fill_value=0).reset_index()
 
     return df_shortform
+
+
+@lru_cache(1000)
+def get_cases_from_api(countries=constants.COUNTRIES_TO_GRAPH,
+                       api_url=constants.CASE_API_URL, country_codes=constants.COUNTRY_API_IDS):
+
+    countries = [get_df_for_country(c,
+                                    api_url=api_url,
+                                    country_codes=country_codes) for c in countries]
+
+    return pd.concat(countries)
+
+
+def days_since_start_point(df, threshold=100):
+    """ Get the timepoint to use as a threshold for days since X"""
+
+    idx = df['sum'].apply(lambda x: abs(x-threshold)).argmin()
+
+    return np.arange(len(df)) - idx
+
+
+@st.cache
+def get_df_for_country(name,
+                       api_url=constants.CASE_API_URL,
+                       country_codes=constants.COUNTRY_API_IDS):
+
+    response = requests.get(f"{api_url}/{country_codes[name]}")
+    j = response.json()['location']
+
+    out = []
+    for status in ['confirmed', 'deaths']:
+        timeline = j['timelines'][status]['timeline']
+        _df = pd.DataFrame.from_dict(timeline, orient='index', columns=['sum'])
+        _df['status'] = status
+        _df['daily_count'] = _df['sum'].diff()
+        _df['daily_count_change'] = _df['daily_count'].diff()
+        _df['rolling_daily_count'] = _df['daily_count'].rolling(7).mean()
+        _df['rolling_daily_count_change'] = _df['daily_count_change'].rolling(7).mean()
+        _df['days_since_100'] = days_since_start_point(_df, threshold=100)
+        _df['days_since_30'] = days_since_start_point(_df, threshold=30)
+        _df['days_since_3'] = days_since_start_point(_df, threshold=3)
+
+        out.append(_df)
+
+    df = pd.concat(out)
+
+    df['country'] = name
+
+    return df

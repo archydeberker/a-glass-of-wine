@@ -1,9 +1,8 @@
-import datetime
-
-import requests
 import streamlit as st
 
-from webapp.api.cases import CaseData
+from constants import COUNTRIES_TO_GRAPH
+from webapp.api.cases import CaseData, get_df_for_country
+from webapp.api.graphs import plot_log_daily
 from webapp.api.wine import StockCounter
 from webapp.api import graphs
 
@@ -121,120 +120,15 @@ log_df = pd.melt(log_df,
 
 st.write(px.line(log_df, x='date', y='sum', color='status'))
 
-
-country_dict = {'Canada': 36, 'Italy': 137, 'South Korea': 143,
-                'Hubei': 62, 'France': 116, 'Quebec': 44, 'US': 225,
-                'Alberta': 35,
-                'British Columbia': 36,
-                'Manitoba': 38,
-                'New Brunswick': 39,
-                'Newfoundland & Labrador': 40,
-                'Nova Scotia': 41,
-                'Ontario': 42,
-                'PEI': 43,
-                'Saskatchewan': 45,
-                'Yukon': 256,
-                }
-
-base_URL = ' https://coronavirus-tracker-api.herokuapp.com/v2/locations'
-
-
-def days_since_start_point(df, threshold=100):
-    """ Get the timepoint to use as a threshold for days since X"""
-
-    idx = df['sum'].apply(lambda x: abs(x-threshold)).argmin()
-
-    return np.arange(len(df)) - idx
-
-
-@st.cache
-def get_df_for_country(name):
-    response = requests.get(f"{base_URL}/{country_dict[name]}")
-    j = response.json()['location']
-
-    out = []
-    for status in ['confirmed', 'deaths']:
-        timeline = j['timelines'][status]['timeline']
-        _df = pd.DataFrame.from_dict(timeline, orient='index', columns=['sum'])
-        _df['status'] = status
-        _df['daily_count'] = _df['sum'].diff()
-        _df['daily_count_change'] = _df['daily_count'].diff()
-        _df['rolling_daily_count'] = _df['daily_count'].rolling(7).mean()
-        _df['rolling_daily_count_change'] = _df['daily_count_change'].rolling(7).mean()
-        _df['days_since_100'] = days_since_start_point(_df, threshold=100)
-        _df['days_since_30'] = days_since_start_point(_df, threshold=30)
-        _df['days_since_3'] = days_since_start_point(_df, threshold=3)
-
-        out.append(_df)
-
-    df = pd.concat(out)
-
-    df['country'] = name
-
-    return df
-
-
-def plot_log_daily(df, status, x_axis='days_since_3', y_axis='rolling_daily_count', log=True):
-    df.reset_index()
-
-    # Get rid of data before day 0
-    df = df.loc[df[x_axis] >= 0]
-    df = df.loc[df['status'] == status]
-
-    colors = 4*['rgba(0,0,0,.2)',
-                ] + ['rgba(127,0,0,.9)',
-                     'rgba(0,0,50,.5)',
-                     'rgba(0,0,50,.5)',
-                     'rgba(0,0,50,.5)']
-
-    font_colors = 4*['rgba(0,0,0,.6)',
-                ] + ['rgba(127,0,0,1)',
-                     'rgba(0,0,50,.6)',
-                     'rgba(0,0,50,.6)',
-                     'rgba(0,0,50,.6)']
-
-    fig = px.line(df,
-                  x=x_axis,
-                  y=y_axis,
-                  color='country',
-                  template='plotly_white',
-                  color_discrete_sequence=colors)
-
-    for i, country in enumerate(df.country.unique()):
-        last_row = df.loc[df['country'] == country].iloc[-1]
-        fig.add_annotation(x=last_row[x_axis],
-                           y=np.log10(last_row[y_axis]) if log else last_row[y_axis],
-                           xanchor="left",
-                           text=country,
-                           font=dict(
-                               color=font_colors[i],
-                               size=13,
-                           ))
-
-    if log:
-        fig.update_layout(yaxis_type="log", showlegend=False, title=dict(text=status))
-
-    fig.update_annotations(dict(
-        xref="x",
-        yref="y",
-        showarrow=False,
-    ))
-
-    st.write(fig)
-
-
-countries = [get_df_for_country(c) for c in ['Italy', 'Hubei', 'South Korea',
-                                             'US', 'Quebec', 'British Columbia',
-                                             'Ontario', 'Alberta']]
+countries = [get_df_for_country(c) for c in COUNTRIES_TO_GRAPH]
 
 combined = pd.concat(countries)
-combined['rolling_daily_count'] = combined['daily_count'].rolling(7).mean()
 
 st.write(combined)
 
-plot_log_daily(combined, 'confirmed', x_axis='days_since_30')
-plot_log_daily(combined, 'deaths', x_axis='days_since_3')
+st.write(plot_log_daily(combined, 'confirmed', x_axis='days_since_30'))
+st.write(plot_log_daily(combined, 'deaths', x_axis='days_since_3'))
 
-plot_log_daily(combined, 'confirmed', x_axis='days_since_30', y_axis='rolling_daily_count_change', log=False)
-plot_log_daily(combined, 'deaths', x_axis='days_since_3', y_axis='rolling_daily_count_change', log=False)
+st.write(plot_log_daily(combined, 'confirmed', x_axis='days_since_30', y_axis='rolling_daily_count_change', log=False))
+st.write(plot_log_daily(combined, 'deaths', x_axis='days_since_3', y_axis='rolling_daily_count_change', log=False))
 
