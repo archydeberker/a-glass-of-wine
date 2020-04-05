@@ -8,6 +8,7 @@ import pandas as pd
 
 
 def map_wines(counter):
+    # Method from https://code.tutsplus.com/tutorials/charting-using-plotly-in-python--cms-30286
 
     country_df = counter.stock_change_df.groupby('wine_origin_now').sum()
     country_df['country'] = country_df.index
@@ -73,22 +74,3 @@ def plot_cases(df):
     case_graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
     return case_graphJSON
-
-
-def example_graph():
-    # Method from https://code.tutsplus.com/tutorials/charting-using-plotly-in-python--cms-30286
-
-    count = 500
-    xScale = np.linspace(0, 100, count)
-    yScale = np.random.randn(count)
-
-    # Create a trace
-    trace = go.Scatter(
-        x=xScale,
-        y=yScale
-    )
-
-    data = [trace]
-    graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
-
-    return graphJSON
