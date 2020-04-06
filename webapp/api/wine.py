@@ -65,6 +65,9 @@ class StockCounter:
         now = datetime.datetime.now()
         one_day_ago = now - datetime.timedelta(days=1)
 
+        # TODO: change this to take data from the last complete day, not the last 24 hours
+        # Currently the numbers move around based on time of day, which is disoncerting
+
         most_recent = self.online_df['timestamp'].max()
         closest_to_one_day_ago = self.online_df['timestamp'].iloc[abs(one_day_ago - self.online_df['timestamp']).argmin()]
 
