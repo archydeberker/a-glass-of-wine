@@ -3,7 +3,6 @@ import tempfile
 import numpy as np
 import pandas as pd
 import requests
-import streamlit as st
 
 import constants
 import data.storage
@@ -100,7 +99,6 @@ def days_since_start_point(df, threshold=100):
     return np.arange(len(df)) - idx
 
 
-@st.cache
 def get_df_for_country(name,
                        api_url=constants.CASE_API_URL,
                        country_codes=constants.COUNTRY_API_IDS):
