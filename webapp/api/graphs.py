@@ -52,8 +52,8 @@ def plot_cases(df, return_fig=False):
     df = df.loc[df['date'] > pd.Timestamp(datetime.date(year=2020, month=3, day=22))]
     # move to constants and import?
     colors = {'hospitalized': 'rgba(232, 230, 235,1)',
-              'recovered': 'rgba(112, 55, 71,1)',
-              'cases': 'rgba(211, 176, 245,1)',
+              'recovered': 'rgba(112, 55, 71,.5)',
+              'cases': 'rgba(150, 176, 245,0.3)',
               'deaths': 'rgba(0, 0, 0,1)'}
     case_types = ['deaths', 'recovered', 'cases']
 
@@ -63,7 +63,7 @@ def plot_cases(df, return_fig=False):
         fig.add_trace(go.Scatter(
             x=df.date,
             y=df[case_type],
-            hoverinfo='x+y',
+            hovertemplate='%{x}: %{y}',
             mode='lines',
             line=dict(width=0.5, color=colors[case_type]),
             fillcolor=colors[case_type],

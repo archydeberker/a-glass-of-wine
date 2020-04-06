@@ -34,7 +34,7 @@ def upload_page():
 
     confirmed = plot_log_daily(international_cases_df, 'confirmed', x_axis='days_since_30',
                                x_axis_title='Days since 30 cases',
-                               y_axis_title='Daily confirmed cases (smoothed)')
+                               y_axis_title='Daily new cases (smoothed)')
     deaths = plot_log_daily(international_cases_df, 'deaths', x_axis='days_since_3',
                             x_axis_title='Days since 3 deaths',
                             y_axis_title='Daily deaths (smoothed)')
