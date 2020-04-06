@@ -15,7 +15,6 @@ ONLINE_FILE_REGEX = '2020.*\.csv'
 
 GLASSES_IN_A_BOTTLE = 6
 
-
 CASE_DOWNLOAD_URL = 'https://docs.google.com/spreadsheets/d/1D6okqtBS3S2NRC7GFVHzaZ67DuTw7LX49-fqSLwJyeo/export?format=xlsx'
 CASE_CITATION = "https://github.com/ishaberry/Covid19Canada"
 CASE_DATA_CSV = "canada_case_data_latest.csv"
@@ -36,7 +35,8 @@ COUNTRY_API_IDS = {'Canada': 36, 'Italy': 137, 'South Korea': 143,
                 'Saskatchewan': 45,
                 'Yukon': 256,
                    }
-CASE_API_URL = ' https://coronavirus-tracker-api.herokuapp.com/v2/locations'
+CASE_API_URL = 'https://coronavirus-tracker-api.herokuapp.com/v2/locations'
+CASE_API_GITHUB = 'https://github.com/ExpDev07/coronavirus-tracker-api'
 COUNTRIES_TO_GRAPH = ['Italy', 'Hubei', 'South Korea',
                                              'US', 'Quebec', 'British Columbia',
                                              'Ontario', 'Alberta']

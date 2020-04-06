@@ -6,7 +6,7 @@ from webapp.api.graphs import map_wines, plot_cases, plot_log_daily, encode_as_j
 from webapp.api.wine import Wine, StockCounter, glasses_sold_yesterday
 from webapp.api.utils import DataFetcher
 from webapp.api.cases import CaseData, get_cases_from_api
-from constants import Colours, CASE_CITATION
+from constants import Colours, CASE_CITATION, CASE_API_GITHUB
 import os
 
 app = Flask(__name__)
@@ -23,7 +23,7 @@ cases = DataFetcher(data_object=CaseData(use_cached=True, local_path=case_local_
 
 
 @app.route('/')
-def upload_page():
+def home_page():
     top_wines = stock.latest_data.stock_change_df.iloc[:5]
     sales = stock.latest_data.sales_by_wine_type
     total_sales = sum([v for v in sales.values()])
@@ -38,6 +38,7 @@ def upload_page():
     deaths = plot_log_daily(international_cases_df, 'deaths', x_axis='days_since_3',
                             x_axis_title='Days since 3 deaths',
                             y_axis_title='Daily deaths (smoothed)')
+    deaths.update_layout(margin=dict(t=0))
 
     return render_template('home.html',
                            top_wines=wines,
@@ -53,7 +54,8 @@ def upload_page():
                            case_graphJSON=plot_cases(cases.latest_data.case_df),
                            confirmed_graphJSON=encode_as_json(confirmed),
                            deaths_graphJSON=encode_as_json(deaths),
-                           data_citation=CASE_CITATION)
+                           data_citation=CASE_CITATION,
+                           case_api_citation=CASE_API_GITHUB)
 
 
 if __name__ == "__main__":

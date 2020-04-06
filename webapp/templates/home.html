@@ -44,7 +44,7 @@
                 </div>
             </div>
         </div>
-        <hr class="hr" style="height: 4px; background-color:black; margin-left: 10%;  margin-right: 10%; margin-top: 50px">
+        <hr class="hr" style="height: 3px; background-color:black; margin-left: 10%;  margin-right: 10%; margin-top: 50px">
     </div>
 
 </section>
@@ -132,12 +132,15 @@
         </div>
     </section>
 
-<hr class="hr" style="height: 4px; background-color:black; margin-left: 10%;  margin-right: 10%; margin-top: 50px">
+<hr class="hr" style="height: 3px; background-color:black; margin-left: 10%;  margin-right: 10%; margin-top: 50px">
 
 <div class="container" style="padding-top: 50px">
     <div class="columns is-centered">
         <div class="column is-two-thirds is-narrow">
             <h1 class="subtitle is-size-3"> Since we started drinking our wine</h1>
+            <p> It takes a couple of weeks for the effects of social distancing to become apparent.
+                We can hope to see the growth of new cases slowing around April 7th.
+            </p>
             <div id="case_graph"></div>
         </div>
         </div>
@@ -146,18 +149,48 @@
     <div class="columns is-centered">
         <div class="column is-two-thirds is-narrow">
             <h1 class="subtitle is-size-3"> Here's how we're doing relative to everyone else</h1>
+            <p>Across the world, people are locked away drinking their local tipples and trying to keep COVID-19
+            under control. Our friends in Italy seem to have turned a corner: we'll raise a glass of Valpolicella to that!
+            </p>
             <div id="confirmed_graph"></div>
         </div>
         </div>
 </div>
+
 <div class="container" style="padding-top: 50px">
     <div class="columns is-centered">
         <div class="column is-two-thirds is-narrow">
             <div id="deaths_graph"></div>
         </div>
-        </div>
+    </div>
 </div>
-    <section style="padding-top: 50px">
+
+<hr class="hr" style="height: 3px; background-color:black; margin-left: 10%;  margin-right: 10%; margin-top: 50px">
+
+
+<div class="container" style="padding-top: 50px">
+    <div class="columns is-centered">
+        <div class="column is-one-third is-narrow has-text-centered">
+
+
+<figure class="image is-centered ">
+                        <img src="/static/assets/images/ellipse.png"
+                             style="width:60%; max-width: 500px; margin-top:-20px; margin: 0 auto; dsiplay: block">
+                        <div class="is-overlay" style="margin-top:40px">
+                            <h1 class="has-text-centered is-size-3 is-family-serif has-text-weight-medium">
+                                Stay home, open a bottle, and know that Quebec drinks with you!
+                            </h1>
+                        </div>
+                    </figure>
+
+            <div style="border-radius: 50%; background-color: black, height: 50px; display: overlay;">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<section style="padding-top: 50px">
         <!--    <footer class="footer" style="bottom: 0; width: 100%; padding-bottom: 20px; ">-->
         <div class='has-text-centered'>
             <figure class='image'>
@@ -170,8 +203,9 @@
             <strong>A Glass of Wine May Help </strong> is made by
             <a href=""> Archy de Berker </a> and <a href=""> Claudel Rheault</a> with help from
             <a href=""> Stephanie Willis</a>.
-            <p> Let us know if you'd like to have a (virtual) drink! </p>
-            <p class="is-size-9"> COVID-19 data refreshed daily from <a href={{data_citation}}> COVID-19 Canada Open Data Working Group </a></p>
+            <p class="is-size-9"> COVID-19 data refreshed daily from
+                <a href={{data_citation}}> COVID-19 Canada Open Data Working Group </a>
+            and <a href={{case_api_citation}}> the Coronavirus Tracker API </a> </p>
         </div>
     </section>
 </body>
