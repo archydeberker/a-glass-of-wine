@@ -53,7 +53,7 @@ def plot_cases(df, return_fig=False):
     # move to constants and import?
     colors = {'hospitalized': 'rgba(232, 230, 235,1)',
               'recovered': 'rgba(112, 55, 71,.5)',
-              'cases': 'rgba(150, 176, 245,0.3)',
+              'cases': 'rgba(170, 176, 200,0.3)',
               'deaths': 'rgba(0, 0, 0,1)'}
     case_types = ['deaths', 'recovered', 'cases']
 
