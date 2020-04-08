@@ -7,9 +7,21 @@ from webapp.api.wine import Wine, StockCounter, glasses_sold_yesterday
 from webapp.api.utils import DataFetcher
 from webapp.api.cases import CaseData, get_cases_from_api
 from constants import Colours, CASE_CITATION, CASE_API_GITHUB
+from flask_migrate import Migrate
 import os
 
+from webapp.models import db
+
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+        "DATABASE_URL", "sqlite:///db.sqlite"
+    )
+
+print(f"Using database at {app.config['SQLALCHEMY_DATABASE_URI']}")
+
+db.init_app(app)
+migrate = Migrate(app, db)
+
 
 local = os.path.exists('/Users/archydeberker')
 wine_local_path = '/Users/archydeberker/Desktop/code/saq/scripts/online_data_latest.csv' if local else None
