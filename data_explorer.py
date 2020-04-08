@@ -36,6 +36,7 @@ wine_names = st.sidebar.multiselect(options=options, label='Wine', default=optio
 st.header('All wines stock change')
 fig = px.bar(counter.stock_change_df, x='wine_name', y='stock_change')
 st.write(fig)
+st.write(counter.stock_change_df.head(10))
 
 _df = counter.stock_change_df.copy()
 _df.dropna(inplace=True, subset=['wine_type_now'])
@@ -43,14 +44,21 @@ _df.dropna(inplace=True, subset=['wine_type_now'])
 fig = px.bar(_df, x='wine_type_now', y='stock_change')
 st.write(fig)
 
-_df = counter.stock_change_df.copy()
-_df.dropna(inplace=True, subset=['wine_type_now'])
+
 _df = _df.groupby('wine_type_now').sum()
 st.write(_df)
 st.write({'red': _df.loc['Red wine']['stock_change'],
           'white': _df.loc['White wine']['stock_change'],
           'rose': _df.loc['Rosé']['stock_change'],
           })
+
+all_data_df = counter.online_df.copy()
+
+all_data_df['date'] = all_data_df['timestamp'].apply(lambda x: x.date())
+sales_by_type = all_data_df.groupby(['date', 'wine_type'])['wine_consumption'].sum().reset_index()
+st.write(sales_by_type)
+fig = px.line(sales_by_type, x='date', y='wine_consumption', color='wine_type')
+st.write(fig)
 
 # Wine origin graph
 country_df = counter.stock_change_df.groupby(['wine_origin_now', 'wine_type_now']).sum().reset_index()
@@ -93,7 +101,7 @@ st.write(filter_df(counter.stock_change_df, wine_names))
 st.header('By colour')
 _new_data = counter.online_df.dropna(subset=['wine_type']).groupby(['timestamp', 'wine_type']).sum().reset_index()
 st.write(_new_data)
-fig = px.area(_new_data, x='timestamp', y='stock', color='wine_type', template="plotly_white")
+fig = px.line(_new_data, x='timestamp', y='stock', color='wine_type', template="plotly_white")
 st.write(fig)
 
 cases = load_case_data()

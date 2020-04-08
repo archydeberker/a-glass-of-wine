@@ -96,6 +96,7 @@ class StockCounter:
         stock_change_df['stock_change'] = stock_change_df['cumulative_wine_consumption_now'] - \
                                           stock_change_df['cumulative_wine_consumption_1_day_ago']
 
+        # TODO this is kind of janky. Better to group by date and then take the sum for the date
         # Drop duplicates
         stock_change_df.drop_duplicates(subset=['wine_name'], inplace=True)
 
@@ -105,11 +106,11 @@ class StockCounter:
 
     @property
     def bottles_sold(self):
-        return abs(self.stock_change_df)['stock_change'].sum()
+        return self.stock_change_df['stock_change'].sum()
 
     @property
     def glasses_sold(self):
-        return abs(self.stock_change_df)['stock_change'].sum() * constants.GLASSES_IN_A_BOTTLE
+        return self.bottles_sold * constants.GLASSES_IN_A_BOTTLE
 
     @property
     def sales_by_wine_type(self):
@@ -117,6 +118,6 @@ class StockCounter:
         _df.dropna(inplace=True, subset=['wine_type_now'])
         _df = _df.groupby('wine_type_now').sum()
         return {'red': _df.loc['Red wine']['stock_change'],
-                  'white': _df.loc['White wine']['stock_change'],
-                  'rose': _df.loc['Rosé']['stock_change'],
-                  }
+                'white': _df.loc['White wine']['stock_change'],
+                'rose': _df.loc['Rosé']['stock_change'],
+                }
