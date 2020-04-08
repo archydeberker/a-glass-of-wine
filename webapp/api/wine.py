@@ -71,6 +71,11 @@ class StockCounter:
         most_recent = self.online_df['timestamp'].max()
         closest_to_one_day_ago = self.online_df['timestamp'].iloc[abs(one_day_ago - self.online_df['timestamp']).argmin()]
 
+        df.sort_values(by=['id', 'timestamp'], inplace=True)
+        df['stock_delta'] = df['stock'].diff()
+        df['wine_consumption'] = df['stock_delta'].apply(lambda x: abs(min(0, x)))
+        df['cumulative_wine_consumption'] = df.groupby('id')['wine_consumption'].cumsum()
+
         stock_1_day_ago_df = df.loc[df['timestamp'] == closest_to_one_day_ago]
 
         stock_change_df = self.online_df.loc[self.online_df['timestamp'] == most_recent].copy()
@@ -88,8 +93,9 @@ class StockCounter:
 
         # Assume if a wine dropped out of the stock list it was sold out
         stock_change_df['stock_now'].fillna(0)
+        stock_change_df['stock_change'] = stock_change_df['cumulative_wine_consumption_now'] - \
+                                          stock_change_df['cumulative_wine_consumption_1_day_ago']
 
-        stock_change_df['stock_change'] = stock_change_df['stock_now'] - stock_change_df['stock_1_day_ago']
         stock_change_df.sort_values(by='stock_change', inplace=True)
 
         # Drop duplicates
@@ -97,16 +103,13 @@ class StockCounter:
 
         return stock_change_df
 
-    def _negative_stock_change(self, df):
-        return self.stock_change_df.loc[self.stock_change_df['stock_change'] <= 0]
-
     @property
     def bottles_sold(self):
-        return abs(self._negative_stock_change(self.stock_change_df)['stock_change'].sum())
+        return abs(self.stock_change_df)['stock_change'].sum()
 
     @property
     def glasses_sold(self):
-        return abs(self._negative_stock_change(self.stock_change_df)['stock_change'].sum() * constants.GLASSES_IN_A_BOTTLE)
+        return abs(self.stock_change_df)['stock_change'].sum() * constants.GLASSES_IN_A_BOTTLE
 
     @property
     def sales_by_wine_type(self):
