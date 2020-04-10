@@ -38,8 +38,9 @@ def home_page():
                             x_axis_title='Days since 3 deaths',
                             y_axis_title='Daily deaths (smoothed)')
     deaths.update_layout(margin=dict(t=0))
-
+    days_since_lockdown_started = (datetime.datetime.now().date() - datetime.date(year=2020, month=3, day=22)).days
     return render_template('home.html',
+                           days_since_lockdown_started=days_since_lockdown_started,
                            top_wines=wines,
                            glasses_sold=glasses_sold_yesterday(stock.latest_data.stock_change_df),
                            red_percentage=percentages['red'],
