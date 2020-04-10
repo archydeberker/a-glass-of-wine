@@ -4,7 +4,8 @@ import numpy as np
 
 from constants import Colours
 import plotly
-from plotly import graph_objects as go, express as px
+from plotly import graph_objects as go
+from plotly.subplots import make_subplots
 import plotly.express as px
 import datetime
 import pandas as pd
@@ -50,6 +51,7 @@ def map_wines(counter):
 def plot_cases(df, return_fig=False):
 
     df = df.loc[df['date'] > pd.Timestamp(datetime.date(year=2020, month=3, day=22))]
+    df['new_cases'] = df['cases'].diff()
     # move to constants and import?
     colors = {'hospitalized': 'rgba(232, 230, 235,1)',
               'recovered': 'rgba(112, 55, 71,.5)',
@@ -57,7 +59,7 @@ def plot_cases(df, return_fig=False):
               'deaths': 'rgba(0, 0, 0,1)'}
     case_types = ['deaths', 'recovered', 'cases']
 
-    fig = go.Figure()
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
 
     for case_type in case_types:
         fig.add_trace(go.Scatter(
@@ -71,11 +73,22 @@ def plot_cases(df, return_fig=False):
             name=case_type
         ))
 
+    # fig.add_trace(go.Scatter(
+    #     x=df.date,
+    #     y=df['new_cases'],
+    #     hovertemplate='%{x}: %{y}',
+    #     mode='lines',
+    #     line=dict(width=0.5, color='rgba(127,0,0,1)'),
+    #     name='new_cases',
+    # ), secondary_y=True)
+
     fig.update_layout(
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
         legend_orientation='h',
         legend=dict(x=-.1, y=1.2),
+        margin={'l': 5,
+                'r': 5}
     )
     fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(200,200,200,0.51)')
 
@@ -126,7 +139,8 @@ def plot_log_daily(df, status, x_axis='days_since_3', y_axis='rolling_daily_coun
                            ))
 
     if log:
-        fig.update_layout(yaxis_type="log", showlegend=False)
+        fig.update_layout(yaxis_type="log", showlegend=False,
+                          margin={'r': 5})
 
     fig.update_layout(xaxis_title=x_axis_title or x_axis,
                       yaxis_title=y_axis_title or y_axis,
