@@ -7,12 +7,12 @@ from data.storage import list_files_newer_than_date, load_new_files
 
 def main():
 
-    today = datetime.datetime.now().date()
-    today_midnight = datetime.datetime(today.year, today.month, today.day)
+    today = datetime.datetime.now()
+    one_day_ago = today + datetime.timedelta(days=-1)
 
-    print(f"Today midnight timestamp {today_midnight}")
+    print(f"Current timestamp {today}")
 
-    new_files = list_files_newer_than_date(today_midnight)
+    new_files = list_files_newer_than_date(one_day_ago)
     today_df = load_new_files(new_files)
 
     print(f"{len(today_df)} rows in today data, spanning {today_df['timestamp'].min()} to "
