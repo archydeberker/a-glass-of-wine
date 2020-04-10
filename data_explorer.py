@@ -14,7 +14,7 @@ import pandas as pd
 
 @st.cache
 def load_data():
-    counter = StockCounter(use_cached=True, local_path='/Users/archydeberker/Desktop/code/saq/scripts/online_data_latest.csv')
+    counter = StockCounter()
     return counter
 
 

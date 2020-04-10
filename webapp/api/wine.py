@@ -1,11 +1,7 @@
 import datetime
 
-import pandas as pd
-
-import data.storage
 import constants
-from data.analysis import parse_timestamp_from_filename
-from data.storage import list_online_stock_files, load_latest_online_combined_df
+from data.storage import list_online_stock_files, load_latest_online_combined_df, load_today_df
 
 
 def glasses_sold_yesterday(stock_change_df):
@@ -26,47 +22,27 @@ class Wine:
 
 
 class StockCounter:
-    def __init__(self, use_cached=False, local_path=None):
-        if use_cached and not local_path:
-            self.online_df = load_latest_online_combined_df()
-        elif local_path:
-            self.online_df = pd.read_csv(local_path, parse_dates=['timestamp'])
-        else:
-            self.online_files = list_online_stock_files()
+    def __init__(self):
 
-            print(f"{len(self.online_files)} of those were for online stock")
-            self.online_df = self.load_online_data()
-
-        print('Getting stock change df')
+        print('Loading df for today')
+        self.online_df = load_today_df()
+        print(f"Oldest datapoint is {self.online_df['timestamp'].min()}")
+        print(f"Latest datapoint is {self.online_df['timestamp'].max()}")
         self.stock_change_df = self.get_daily_stock_change_df()
-
-    def load_online_data(self):
-        all_data = []
-        for file in self.online_files:
-            print(file)
-            df = data.storage.get_s3_data_to_df(file)
-            df['timestamp'] = parse_timestamp_from_filename(file)
-            all_data.append(df)
-
-        return pd.concat(all_data)
+        print('Calculated stock change df')
 
     def get_daily_stock_change_df(self):
         df = self.online_df
-        now = datetime.datetime.now()
-        one_day_ago = now - datetime.timedelta(days=1)
-
-        # TODO: change this to take data from the last complete day, not the last 24 hours
-        # Currently the numbers move around based on time of day, which is disoncerting
 
         most_recent = self.online_df['timestamp'].max()
-        closest_to_one_day_ago = self.online_df['timestamp'].iloc[abs(one_day_ago - self.online_df['timestamp']).argmin()]
+        oldest = self.online_df['timestamp'].min()
 
         df.sort_values(by=['id', 'timestamp'], inplace=True)
         df['stock_delta'] = df.groupby('wine_type')['stock'].diff()
         df['wine_consumption'] = df['stock_delta'].apply(lambda x: abs(min(0, x)))
         df['cumulative_wine_consumption'] = df.groupby('id')['wine_consumption'].cumsum()
 
-        stock_1_day_ago_df = df.loc[df['timestamp'] == closest_to_one_day_ago]
+        stock_1_day_ago_df = df.loc[df['timestamp'] == oldest]
 
         stock_change_df = self.online_df.loc[self.online_df['timestamp'] == most_recent].copy()
 
@@ -86,7 +62,6 @@ class StockCounter:
         stock_change_df['stock_change'] = stock_change_df['cumulative_wine_consumption_now'] - \
                                           stock_change_df['cumulative_wine_consumption_1_day_ago']
 
-        # TODO this is kind of janky. Better to group by date and then take the sum for the date
         # Drop duplicates
         stock_change_df.drop_duplicates(subset=['wine_name'], inplace=True)
 

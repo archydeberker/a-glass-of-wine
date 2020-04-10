@@ -7,16 +7,14 @@ from webapp.api.wine import Wine, StockCounter, glasses_sold_yesterday
 from webapp.api.utils import DataFetcher
 from webapp.api.cases import CaseData, get_cases_from_api
 from constants import Colours, CASE_CITATION, CASE_API_GITHUB
-import os
 
 
 app = Flask(__name__)
 
 local = False # os.path.exists('/Users/archydeberker')
-wine_local_path = '/Users/archydeberker/Desktop/code/saq/scripts/online_data_latest.csv' if local else None
 case_local_path = '/Users/archydeberker/Desktop/code/saq/scripts/canada_case_data_latest.csv' if local else None
 
-stock = DataFetcher(data_object=StockCounter(use_cached=True, local_path=wine_local_path),
+stock = DataFetcher(data_object=StockCounter(),
                     refresh_interval=datetime.timedelta(hours=1))
 
 cases = DataFetcher(data_object=CaseData(use_cached=True, local_path=case_local_path),

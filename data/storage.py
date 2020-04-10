@@ -72,6 +72,16 @@ def load_latest_online_combined_df():
                                     'wine_img': 'str'})
 
 
+def load_today_df():
+    return get_s3_data_to_df(constants.TODAY_SAQ_DATA_CSV,
+                             parse_dates=['timestamp'],
+                             dtype={'wine_name': 'object',
+                                    'id': 'int64',
+                                    'stock': 'int64',
+                                    'timestamp': 'str',
+                                    'wine_img': 'str'})
+
+
 def list_files_newer_than_date(target_date):
     """
     Check for CSVs new than `target date`
