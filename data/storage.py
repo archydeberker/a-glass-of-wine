@@ -1,3 +1,5 @@
+import re
+
 import boto3
 from botocore.exceptions import ClientError
 import constants
@@ -48,6 +50,23 @@ def list_data_on_s3(bucket=constants.S3_BUCKET_NAME, **kwargs):
 def get_s3_data_to_df(filename, **kwargs):
     data = download_file_from_s3(filename)
     return pd.read_csv(BytesIO(data), **kwargs)
+
+
+def list_online_stock_files(regex=constants.ONLINE_FILE_REGEX):
+    files = list_data_on_s3()
+    return list(filter(lambda x: bool(re.match(regex, x)), files))
+
+
+def load_latest_online_combined_df():
+    cache_files = sorted(list_data_on_s3(Prefix='online_data'))
+    print(f'Using cached files {cache_files[-1]}')
+    return get_s3_data_to_df(cache_files[-1],
+                             parse_dates=['timestamp'],
+                             dtype={'wine_name': 'object',
+                                    'id': 'int64',
+                                    'stock': 'int64',
+                                    'timestamp': 'str',
+                                    'wine_img': 'str'})
 
 
 if __name__ == '__main__':

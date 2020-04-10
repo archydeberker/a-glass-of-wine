@@ -12,7 +12,7 @@ import os
 
 app = Flask(__name__)
 
-local = os.path.exists('/Users/archydeberker')
+local = False # os.path.exists('/Users/archydeberker')
 wine_local_path = '/Users/archydeberker/Desktop/code/saq/scripts/online_data_latest.csv' if local else None
 case_local_path = '/Users/archydeberker/Desktop/code/saq/scripts/canada_case_data_latest.csv' if local else None
 
