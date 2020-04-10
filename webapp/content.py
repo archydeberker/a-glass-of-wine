@@ -88,7 +88,7 @@ class ContentFr:
 
     @property
     def title(self):
-        return 'Un verre de vin peut aider'
+        return 'Un Verre de Vin Peut Aider'
 
     @property
     def isolation_text(self):
