@@ -72,12 +72,22 @@ class ContentEn:
     @property
     def footer(self):
         return Markup("""
+                 
+                         <p class='is-size-6 is-family-serif'> 
                 <strong>A Glass of Wine May Help </strong> is made by
                 <a href=""> Archy de Berker </a> and <a href=""> Claudel Rheault</a> with help from
-                <a href=""> Stephanie Willis</a>
+                <a href=""> Stephanie Willis</a> </p>
+                <p class='is-size-6 is-family-serif'>
+                We'd love to be in touch;  
+                <a href="https://ctt.ac/68jVg">
+                 tweet us a photo </a> with a big glass of your favourite vintage! 
+                 </p>
+                 
                 <p class="is-size-9"> COVID-19 data refreshed daily from
                 <a href={{data_citation}}> COVID-19 Canada Open Data Working Group </a>
             and <a href={{case_api_citation}}> the Coronavirus Tracker API </a></p>
+            
+       
             """)
 
 
@@ -160,8 +170,10 @@ class ContentFr:
     def footer(self):
         return Markup("""
                 <strong>Un Verre de Vin Peut Aider </strong> est fait par
-                <a href=""> Archy de Berker </a> etc <a href=""> Claudel Rheault</a> avec l'aide de
-                <a href=""> Stephanie Willis</a>
+                <a href="https://www.linkedin.com/in/archy-de-berker/"> 
+                Archy de Berker </a> et <a href="https://www.linkedin.com/in/claudelrheault/">
+                 Claudel Rheault</a> avec l'aide de
+                <a href="https://www.linkedin.com/in/steph-willis-7465759a/"> Stephanie Willis</a>
                 <p class="is-size-9"> Données de COVID-19 rafraîchie chaque jour de
                 <a href={{data_citation}}> COVID-19 Canada Open Data Working Group </a>
             et <a href={{case_api_citation}}> the Coronavirus Tracker API </a></p>
