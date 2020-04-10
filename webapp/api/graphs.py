@@ -48,6 +48,22 @@ def map_wines(counter):
     return graphJSON
 
 
+def _format_axes(fig):
+
+    fig.update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        legend_orientation='h',
+        legend=dict(x=-.1, y=1.2),
+        margin={'l': 5,
+                'r': 5}
+    )
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(200,200,200,0.2)', zeroline=False)
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(200,200,200,0.2)', zeroline=False)
+
+    return fig
+
+
 def plot_cases(df, return_fig=False):
 
     df = df.loc[df['date'] > pd.Timestamp(datetime.date(year=2020, month=3, day=22))]
@@ -82,15 +98,7 @@ def plot_cases(df, return_fig=False):
     #     name='new_cases',
     # ), secondary_y=True)
 
-    fig.update_layout(
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        legend_orientation='h',
-        legend=dict(x=-.1, y=1.2),
-        margin={'l': 5,
-                'r': 5}
-    )
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(200,200,200,0.51)')
+    _format_axes(fig)
 
     if return_fig:
         return fig
@@ -151,5 +159,7 @@ def plot_log_daily(df, status, x_axis='days_since_3', y_axis='rolling_daily_coun
         yref="y",
         showarrow=False,
     ))
+
+    _format_axes(fig)
 
     return fig

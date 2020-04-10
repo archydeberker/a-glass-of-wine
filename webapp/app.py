@@ -1,4 +1,6 @@
 import datetime
+import os
+from functools import lru_cache
 
 from flask import Flask, render_template
 
@@ -11,18 +13,27 @@ from constants import Colours, CASE_CITATION, CASE_API_GITHUB
 
 app = Flask(__name__)
 
-local = False # os.path.exists('/Users/archydeberker')
+local = os.path.exists('/Users/archydeberker')
 case_local_path = '/Users/archydeberker/Desktop/code/saq/scripts/canada_case_data_latest.csv' if local else None
 
-stock = DataFetcher(data_object=StockCounter(),
-                    refresh_interval=datetime.timedelta(hours=1))
 
-cases = DataFetcher(data_object=CaseData(use_cached=True, local_path=case_local_path),
-                    refresh_interval=datetime.timedelta(hours=1))
+@lru_cache(128)
+def get_stock_data():
+    return DataFetcher(data_object=StockCounter(),
+                       refresh_interval=datetime.timedelta(hours=1))
+
+
+@lru_cache(128)
+def get_cases_data():
+    return DataFetcher(data_object=CaseData(use_cached=True, local_path=case_local_path),
+                       refresh_interval=datetime.timedelta(hours=1))
 
 
 @app.route('/')
 def home_page():
+    cases = get_cases_data()
+    stock = get_stock_data()
+
     top_wines = stock.latest_data.stock_change_df.iloc[:5]
     sales = stock.latest_data.sales_by_wine_type
     total_sales = sum([v for v in sales.values()])
