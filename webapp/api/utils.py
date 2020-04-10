@@ -16,6 +16,6 @@ class DataFetcher:
         # refreshed
         if datetime.datetime.now() - self.last_refreshed > self.refresh_interval:
             print('Refreshing data from S3')
-            self._data.__init__(use_cached=True)
+            self._data.__init__()
 
         return self._data

@@ -23,7 +23,6 @@ class Wine:
 
 class StockCounter:
     def __init__(self, online_df=None):
-
         if online_df is not None:
             self.online_df = online_df
         else:
