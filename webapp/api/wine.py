@@ -1,11 +1,11 @@
 import datetime
-import re
 
 import pandas as pd
 
 import data.storage
 import constants
 from data.analysis import parse_timestamp_from_filename
+from data.storage import list_online_stock_files, load_latest_online_combined_df
 
 
 def glasses_sold_yesterday(stock_change_df):
@@ -28,21 +28,11 @@ class Wine:
 class StockCounter:
     def __init__(self, use_cached=False, local_path=None):
         if use_cached and not local_path:
-            cache_files = sorted(data.storage.list_data_on_s3(Prefix='online_data'))
-            print(f'Using cached files {cache_files[-1]}')
-            self.online_df = data.storage.get_s3_data_to_df(cache_files[-1],
-                                                            parse_dates=['timestamp'],
-                                                            dtype={'wine_name': 'object',
-                                                                   'id': 'int64',
-                                                                   'stock': 'int64',
-                                                                   'timestamp': 'str',
-                                                               'wine_img': 'str'})
+            self.online_df = load_latest_online_combined_df()
         elif local_path:
             self.online_df = pd.read_csv(local_path, parse_dates=['timestamp'])
         else:
-            self.files = data.storage.list_data_on_s3()
-            print(f"Found {len(self.files)} files on S3")
-            self.online_files = list(filter(lambda x: bool(re.match(constants.ONLINE_FILE_REGEX, x)), self.files))
+            self.online_files = list_online_stock_files()
 
             print(f"{len(self.online_files)} of those were for online stock")
             self.online_df = self.load_online_data()
@@ -72,7 +62,7 @@ class StockCounter:
         closest_to_one_day_ago = self.online_df['timestamp'].iloc[abs(one_day_ago - self.online_df['timestamp']).argmin()]
 
         df.sort_values(by=['id', 'timestamp'], inplace=True)
-        df['stock_delta'] = df['stock'].diff()
+        df['stock_delta'] = df.groupby('wine_type')['stock'].diff()
         df['wine_consumption'] = df['stock_delta'].apply(lambda x: abs(min(0, x)))
         df['cumulative_wine_consumption'] = df.groupby('id')['wine_consumption'].cumsum()
 

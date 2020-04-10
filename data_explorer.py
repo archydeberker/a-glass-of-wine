@@ -30,7 +30,7 @@ def filter_df(df, wine_names):
 
 counter = load_data()
 
-options = list(counter.stock_change_df.sort_values(by='stock_change')['wine_name'].unique())
+options = list(counter.stock_change_df.sort_values(by='stock_change', ascending=False   )['wine_name'].unique())
 wine_names = st.sidebar.multiselect(options=options, label='Wine', default=options[0])
 
 st.header('All wines stock change')
@@ -92,8 +92,17 @@ fig.update_layout(
 )
 st.write(fig)
 
+st.write('Stock')
 fig = px.line(filter_df(counter.online_df, wine_names), x='timestamp', y='stock', color='wine_name')
 st.write(fig)
+st.write('Consumption')
+fig = px.line(filter_df(counter.online_df, wine_names), x='timestamp', y='wine_consumption', color='wine_name')
+st.write(fig)
+st.write('Cumulative consumption')
+fig = px.line(filter_df(counter.online_df, wine_names), x='timestamp', y='cumulative_wine_consumption', color='wine_name')
+st.write(fig)
+
+
 
 st.write(filter_df(counter.online_df, wine_names))
 st.write(filter_df(counter.stock_change_df, wine_names))
