@@ -13,12 +13,20 @@ class Wine:
     def __init__(self, name, img, sales):
         self.name = name
         self.img = self._format_img(img)
+        self.url = self._get_url(img)
         self.sales = int(abs(sales))
 
-    def _format_img(self, img_url):
+    @staticmethod
+    def _format_img(img_url):
         img_url = img_url.split('?')[0]
         img_url += '?quality=80&fit=bounds&height=166&width=111&canvas=111:166'
         return img_url
+
+    @staticmethod
+    def _get_url(img_url):
+        # The image URL contains the product code
+        code = img_url.split('/')[-1].split('-')[0]
+        return f"https://www.saq.com/{code}"
 
 
 class StockCounter:
