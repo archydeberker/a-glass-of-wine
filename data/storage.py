@@ -1,10 +1,13 @@
 import re
 
 import boto3
+import numpy as np
 from botocore.exceptions import ClientError
 import constants
 from io import BytesIO
 import pandas as pd
+
+from data.analysis import parse_timestamp_from_filename
 
 
 def _configure_s3_client():
@@ -69,8 +72,33 @@ def load_latest_online_combined_df():
                                     'wine_img': 'str'})
 
 
+def list_files_newer_than_date(target_date):
+    """
+    Check for CSVs new than `target date`
+    """
+    online_files = np.asarray(list_online_stock_files())
+    dates = [parse_timestamp_from_filename(x) for x in online_files]
+    include = [date > target_date for date in dates]
+
+    return online_files[include]
+
+
+def load_new_files(files):
+    new_data = []
+    for file in files:
+        print(file)
+        df = get_s3_data_to_df(file)
+        df['timestamp'] = parse_timestamp_from_filename(file)
+        new_data.append(df)
+
+    return pd.concat(new_data)
+
+
+
 if __name__ == '__main__':
     contents = list_data_on_s3()
     data = download_file_from_s3(contents[0])
     df = pd.read_csv(BytesIO(data))
     print(df.head())
+
+

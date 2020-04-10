@@ -1,5 +1,6 @@
 import os
 
+
 class Colours:
     red = '#7f0000'
     white = '#fff8e1'
@@ -20,6 +21,7 @@ CASE_CITATION = "https://github.com/ishaberry/Covid19Canada"
 CASE_DATA_CSV = "canada_case_data_latest.csv"
 
 ONLINE_DATA_CSV = f"online_data_latest.csv"
+TODAY_SAQ_DATA_CSV = f"saq_data_today.csv"
 
 DOWNLOAD_URL = 'https://docs.google.com/spreadsheets/d/1D6okqtBS3S2NRC7GFVHzaZ67DuTw7LX49-fqSLwJyeo/export?format=xlsx'
 COUNTRY_API_IDS = {'Italy': 137, 'South Korea': 143,
