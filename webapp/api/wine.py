@@ -22,10 +22,13 @@ class Wine:
 
 
 class StockCounter:
-    def __init__(self):
+    def __init__(self, online_df=None):
 
-        print('Loading df for today')
-        self.online_df = load_today_df()
+        if online_df is not None:
+            self.online_df = online_df
+        else:
+            print('Loading df for today')
+            self.online_df = load_today_df()
         print(f"Oldest datapoint is {self.online_df['timestamp'].min()}")
         print(f"Latest datapoint is {self.online_df['timestamp'].max()}")
         self.stock_change_df = self.get_daily_stock_change_df()
