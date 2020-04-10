@@ -9,7 +9,7 @@ from webapp.api.wine import Wine, StockCounter, glasses_sold_yesterday
 from webapp.api.utils import DataFetcher
 from webapp.api.cases import CaseData, get_cases_from_api
 from constants import Colours, CASE_CITATION, CASE_API_GITHUB
-
+from webapp.content import ContentEn, ContentFr
 
 app = Flask(__name__)
 
@@ -30,7 +30,8 @@ def get_cases_data():
 
 
 @app.route('/')
-def home_page():
+@app.route('/<language>')
+def home_page(language='en'):
     cases = get_cases_data()
     stock = get_stock_data()
 
@@ -50,7 +51,15 @@ def home_page():
                             y_axis_title='Daily deaths (smoothed)')
     deaths.update_layout(margin=dict(t=0))
     days_since_lockdown_started = (datetime.datetime.now().date() - datetime.date(year=2020, month=3, day=22)).days
+
+    if language == 'en':
+        content = ContentEn(days_since_lockdown_started, glasses_sold_yesterday(stock.latest_data.stock_change_df))
+    else:
+        content = ContentFr(days_since_lockdown_started, glasses_sold_yesterday(stock.latest_data.stock_change_df))
+
     return render_template('home.html',
+                           french=language == 'fr',
+                           content=content,
                            days_since_lockdown_started=days_since_lockdown_started,
                            top_wines=wines,
                            glasses_sold=glasses_sold_yesterday(stock.latest_data.stock_change_df),

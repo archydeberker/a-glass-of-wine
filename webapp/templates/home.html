@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>A Glass of Wine May Help</title>
+    <title>{{content.title}}</title>
     <link rel="stylesheet" href="/static/assets/css/mystyles.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <style type="text/css">
@@ -14,21 +14,33 @@
             margin:0px;
         }
 
+
     </style>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-163124483-1"></script>
-<script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163124483-1"></script>
+    <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
   gtag('config', 'UA-163124483-1');
-</script>
+
+    </script>
 
 </head>
 <body>
-
+<section class="section">
+    <div class="container buttons has-addons is-pulled-right">
+        {% if french %}
+        <a class="button is-rounded is-white is-hovered " href="/fr"> fr</a>
+        <a class="button is-rounded is-white" href="/en"> en</a>
+        {% else %}
+        <a class="button is-rounded is-white " href="/fr"> fr</a>
+        <a class="button is-rounded is-white is-hovered" href="/en"> en</a>
+        {% endif %}
+    </div>
+</section>
 <section class="hero">
     <div class="hero-body">
         <div class="container">
@@ -42,12 +54,12 @@
                     <figure class="image is-centered ">
                         <img src="/static/assets/images/legault-2.png"
                              style="width:80%; max-width: 500px; margin-top:-20px">
-                        <div  style="margin-top:40px">
+                        <div style="margin-top:40px">
                             <h3 class="is-size-5 has-text-centered is-family-sans-serif" style="margin-top: 10%">
-                                DAY <span class="has-text-weight-bold"> {{days_since_lockdown_started}} </span>OF ISOLATION
+                                {{content.isolation_text}}
                             </h3>
                             <h1 class=" has-text-centered is-size-1 is-family-serif has-text-weight-medium">
-                                A Glass of Wine May Help
+                                {{content.title}}
                             </h1>
                         </div>
                     </figure>
@@ -55,7 +67,8 @@
                 </div>
             </div>
         </div>
-        <hr class="hr" style="height: 3px; background-color:black; margin-left: 10%;  margin-right: 10%; margin-top: 50px">
+        <hr class="hr"
+            style="height: 3px; background-color:black; margin-left: 10%;  margin-right: 10%; margin-top: 50px">
     </div>
 
 </section>
@@ -63,31 +76,29 @@
 
 <div class="container is-centered is-fluid">
     <div class="columns is-centered">
-
-         <div class="subtitle" style="margin-bottom: 50px">
-             Well done everybody, yesterday we bought <span class="has-text-weight-bold">{{glasses_sold}} glasses </span> of wine from SAQ online!
-    </div>
+        <div class="subtitle" style="margin-bottom: 50px">
+            {{content.well_done}}
+        </div>
     </div>
     <div class="columns is-centered">
         <div class="column is-one-fifth">
-            <h2 class="subtitle is-size-3"> What is Quebec drinking? </h2>
+            <h2 class="subtitle is-size-3"> {{content.what_is_quebec_drinking}} </h2>
         </div>
         <div class="column is-one-fifth">
             <p class="is-family-sans-serif">
-                We've been looking at the the stock in SAQ, to see how people have
-                been following Legault's recommendations.
+                {{content.recommendations}}
             </p>
             <br>
         </div>
     </div>
 
     <div class="columns is-centered">
-        <div class="column has-text-centered is-family-sans-serif"> Are we guzzling more red, white, or rosé?</div>
+        <div class="column has-text-centered is-family-sans-serif"> {{content.wine_types}}</div>
     </div>
     <div class="columns is-centered">
         <div class="column has-text-centered is-two-fifths is-family-sans-serif">
             <div class="columns is-centered">
-                <div class="column is-narrow" >
+                <div class="column is-narrow">
                     <div class="columns ">
                         <div style="width:{{red_percentage*0.5}}vw; height:20px; background-color:{{red}}; border-radius: {{radius}}; margin:5px"></div>
                     </div>
@@ -103,53 +114,50 @@
                     <div class="columns">
                         <div style="width:{{rose_percentage*0.5}}vw; height:20px; background-color:{{rose}}; border-radius: {{radius}}; margin:5px"></div>
                     </div>
-                        <div style="width:{{rose_percentage*0.5}}vw; height:20px; margin:10px">{{rose_percentage}}%</div>
-                    </div>
+                    <div style="width:{{rose_percentage*0.5}}vw; height:20px; margin:10px">{{rose_percentage}}%</div>
                 </div>
-
             </div>
+
+        </div>
+        <div>
             <div>
-                <div>
-                </div>
             </div>
         </div>
     </div>
+</div>
 
-    <section class="container is-fluid">
-        <div class="columns is-centered">
-            <div class="column has-text-centered subtitle is-one-quarter is-size-3"
-                 style="margin-top:30px; color: black">
-                Well! Here are the trending bottles in Quebec
-            </div>
+<section class="container is-fluid">
+    <div class="columns is-centered">
+        <div class="column has-text-centered subtitle is-one-quarter is-size-3"
+             style="margin-top:30px; color: black">
+            {{content.trending}}
         </div>
-        <div class="columns" style="padding-top: 50px">
-            {% for wine in top_wines %}
-            <div class="column has-text-centered">
-                <figure><img src={{wine.img}}></figure>
-                <h1 class="is-family-sans-serif is-size-9 has-text-weight-bold" style="min-height: 5em">
-                    <a href={{wine.url}}> {{wine.name}} </a></h1>
-                <h1 class="is-family-sans-serif" style="color: gray">{{wine.sales}} bottles today</h1>
-            </div>
-            {% endfor %}
+    </div>
+    <div class="columns" style="padding-top: 50px">
+        {% for wine in top_wines %}
+        <div class="column has-text-centered">
+            <figure><img src={{wine.img}}></figure>
+            <h1 class="is-family-sans-serif is-size-9 has-text-weight-bold" style="min-height: 5em">
+                <a href={{wine.url}}> {{wine.name}} </a></h1>
+            <h1 class="is-family-sans-serif" style="color: gray">{{wine.sales}} {{content.bottle_label}}</h1>
         </div>
-    </section>
+        {% endfor %}
+    </div>
+</section>
 
-    <section class="container" style="padding-top: 50px">
-        <div><h1 class="has-text-centered subtitle is-size-3">We might be isolated, but we're drinking wines from
-            all
-            over!</h1>
-            <div id="wine_map" class="chart">
-            </div>
+<section class="container" style="padding-top: 50px">
+    <div><h1 class="has-text-centered subtitle is-size-3">{{content.map_blurb}}</h1>
+        <div id="wine_map" class="chart">
         </div>
-    </section>
+    </div>
+</section>
 
 <section style="background-color: rgba(255, 248, 225, 0.7); padding-bottom: 10px">
-    <div class="container" style="padding-top: 50px" >
+    <div class="container" style="padding-top: 50px">
         <div class="columns is-centered">
             <div class="column is-two-thirds is-narrow">
-                <h1 class="subtitle is-size-2"> Since we started drinking our wine alone </h1>
-                <p> It takes a couple of weeks for the effects of social distancing to become apparent.
-                    We can hope to see the growth of new cases slowing around April 7th.
+                <h1 class="subtitle is-size-2"> {{content.since_we_started_drinking}} </h1>
+                <p> {{content.prediction}}
                 </p>
                 <div id="case_graph"></div>
             </div>
@@ -158,23 +166,22 @@
     <div class="container" style="padding-top: 50px">
         <div class="columns is-centered">
             <div class="column is-two-thirds is-narrow">
-                <h1 class="subtitle is-size-3"> Here's how we're doing relative to everyone else</h1>
-                <p>Across the world, people are locked away drinking their local tipples and trying to keep COVID-19
-                    under control. Our friends in Italy seem to have turned a corner: we'll raise a glass of Valpolicella to that!
+                <h1 class="subtitle is-size-3"> {{content.relative_to_world}}</h1>
+                <p> {{content.internationally}}
                 </p>
                 <div id="confirmed_graph"></div>
             </div>
         </div>
     </div>
 
-<div class="container" style="padding-top: 50px">
-    <div class="columns is-centered">
-        <div class="column is-two-thirds is-narrow">
-            <div id="deaths_graph"></div>
+    <div class="container" style="padding-top: 50px">
+        <div class="columns is-centered">
+            <div class="column is-two-thirds is-narrow">
+                <div id="deaths_graph"></div>
+            </div>
         </div>
     </div>
-</div>
-    </section>
+</section>
 
 <section style="background-color: rgb(255, 205, 210, 0.2)">
     <div class="container" style="padding-top: 50px; padding-bottom: 100px">
@@ -185,7 +192,7 @@
                          style="width:60%; max-width: 500px; margin: 0 auto">
                     <div class="is-overlay" style="margin-top:15%">
                         <h1 class="has-text-centered is-size-3 is-family-serif has-text-weight-medium">
-                            Stay home, open a bottle, and know that Quebec drinks with you!
+                            {{content.stay_home}}
                         </h1>
                     </div>
                 </figure>
@@ -201,13 +208,9 @@
                     style="margin: 0 auto; width: auto; margin-bottom: 10px"></a>
         </figure>
     </div>
-    <div class="content has-text-centered container is-family-sans-serif" style="padding-top: 10px; padding-bottom: 100px">
-        <strong>A Glass of Wine May Help </strong> is made by
-        <a href=""> Archy de Berker </a> and <a href=""> Claudel Rheault</a> with help from
-        <a href=""> Stephanie Willis</a>
-        <p class="is-size-9"> COVID-19 data refreshed daily from
-            <a href={{data_citation}}> COVID-19 Canada Open Data Working Group </a>
-            and <a href={{case_api_citation}}> the Coronavirus Tracker API </a></p>
+    <div class="content has-text-centered container is-family-sans-serif"
+         style="padding-top: 10px; padding-bottom: 100px">
+        {{content.footer}}
     </div>
 </section>
 </body>
@@ -229,6 +232,7 @@
         Plotly.plot('case_graph', case_graphs,{});
         Plotly.plot('confirmed_graph', confirmed_graph,{});
         Plotly.plot('deaths_graph', deaths_graph,{});
+
 
 </script>
 
