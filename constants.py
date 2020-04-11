@@ -19,6 +19,7 @@ GLASSES_IN_A_BOTTLE = 6
 CASE_DOWNLOAD_URL = 'https://docs.google.com/spreadsheets/d/1D6okqtBS3S2NRC7GFVHzaZ67DuTw7LX49-fqSLwJyeo/export?format=xlsx'
 CASE_CITATION = "https://github.com/ishaberry/Covid19Canada"
 CASE_DATA_CSV = "canada_case_data_latest.csv"
+COUNTRY_DATA_CACHE_CSV = "international_case_data_latest.csv"
 
 ONLINE_DATA_CSV = f"online_data_latest.csv"
 TODAY_SAQ_DATA_CSV = f"saq_data_today.csv"

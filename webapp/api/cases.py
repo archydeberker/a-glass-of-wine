@@ -6,6 +6,7 @@ import requests
 
 import constants
 import data.storage
+from json.decoder import JSONDecodeError
 
 from functools import lru_cache
 
@@ -84,11 +85,20 @@ def create_cases_df_for_quebec(path_to_download, wideform=True):
 def get_cases_from_api(countries=constants.COUNTRIES_TO_GRAPH,
                        api_url=constants.CASE_API_URL, country_codes=constants.COUNTRY_API_IDS):
 
-    countries = [get_df_for_country(c,
-                                    api_url=api_url,
-                                    country_codes=country_codes) for c in countries]
+    try:
+        countries = [get_df_for_country(c,
+                                        api_url=api_url,
+                                        country_codes=country_codes) for c in countries]
+        countries = pd.concat(countries)
+        countries.to_csv(constants.COUNTRY_DATA_CACHE_CSV)
+        data.storage.upload_data_to_s3(constants.COUNTRY_DATA_CACHE_CSV, constants.COUNTRY_DATA_CACHE_CSV.lstrip('./'))
 
-    return pd.concat(countries)
+    except JSONDecodeError as j:
+        print("There was a problem fetching cases from the API, using last saved version")
+        print(f"Error was {j}")
+        countries = data.storage.get_s3_data_to_df(constants.COUNTRY_DATA_CACHE_CSV)
+
+    return countries
 
 
 def days_since_start_point(df, threshold=100):
