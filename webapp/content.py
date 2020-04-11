@@ -174,6 +174,12 @@ class ContentFr:
                 Archy de Berker </a> et <a href="https://www.linkedin.com/in/claudelrheault/">
                  Claudel Rheault</a> avec l'aide de
                 <a href="https://www.linkedin.com/in/steph-willis-7465759a/"> Stephanie Willis</a>
+                <p class='is-size-6 is-family-serif'>
+                Nous aimerions être en contact;  
+                <a href="https://ctt.ac/68jVg">
+                 tweet-nous un photo </a> avec un grand verre de ta vintage preferée! 
+                 </p>
+                 
                 <p class="is-size-9"> Données de COVID-19 rafraîchie chaque jour de
                 <a href={{data_citation}}> COVID-19 Canada Open Data Working Group </a>
             et <a href={{case_api_citation}}> the Coronavirus Tracker API </a></p>
