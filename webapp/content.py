@@ -75,8 +75,9 @@ class ContentEn:
                  
                          <p class='is-size-6 is-family-serif'> 
                 <strong>A Glass of Wine May Help </strong> is made by
-                <a href=""> Archy de Berker </a> and <a href=""> Claudel Rheault</a> with help from
-                <a href=""> Stephanie Willis</a> </p>
+                <a href="https://www.linkedin.com/in/archy-de-berker/"> Archy de Berker </a> and
+                <a href="https://www.linkedin.com/in/claudelrheault/"> Claudel Rheault</a> with help from
+                <a href="https://www.linkedin.com/in/steph-willis-7465759a/"> Stephanie Willis</a> </p>
                 <p class='is-size-6 is-family-serif'>
                 We'd love to be in touch;  
                 <a href="https://ctt.ac/68jVg">
