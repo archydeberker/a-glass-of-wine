@@ -44,8 +44,10 @@ def filter_df(df, wine_names):
 
 
 counter = load_data()
+st.write(f"Total wine bottles sold {counter.bottles_sold}")
+st.write(f"Total wine glasses sold {counter.glasses_sold}")
 
-options = list(counter.stock_change_df.sort_values(by='stock_change', ascending=False   )['wine_name'].unique())
+options = list(counter.stock_change_df.sort_values(by='stock_change', ascending=False)['wine_name'].unique())
 wine_names = st.sidebar.multiselect(options=options, label='Wine', default=options[0])
 
 st.header('All wines stock change')
@@ -69,11 +71,22 @@ st.write({'red': _df.loc['Red wine']['stock_change'],
 
 all_data_df = counter.online_df.copy()
 
-all_data_df['date'] = all_data_df['timestamp'].apply(lambda x: x.date())
-sales_by_type = all_data_df.groupby(['date', 'wine_type'])['wine_consumption'].sum().reset_index()
-st.write(sales_by_type)
-fig = px.line(sales_by_type, x='date', y='wine_consumption', color='wine_type')
+st.subheader('Checking stock change vs. wine consumption')
+
+st.write(all_data_df.groupby('wine_type')['wine_consumption'].sum())
+fig = px.line(all_data_df.groupby(['wine_type', 'timestamp'])['cumulative_wine_consumption'].sum().reset_index(),
+              x='timestamp', y='cumulative_wine_consumption', color='wine_type', title='Cumulative wine consumption')
 st.write(fig)
+
+fig = px.line(all_data_df.groupby(['wine_type', 'timestamp'])['wine_consumption'].sum().reset_index(),
+              x='timestamp', y='wine_consumption', color='wine_type', title='Wine consumption')
+
+st.write(fig)
+
+fig = px.line(all_data_df.groupby(['wine_type', 'timestamp'])['stock'].sum().reset_index(),
+              x='timestamp', y='stock', color='wine_type', title='Stock')
+st.write(fig)
+
 
 # Wine origin graph
 country_df = counter.stock_change_df.groupby(['wine_origin_now', 'wine_type_now']).sum().reset_index()
@@ -120,8 +133,13 @@ st.write('Cumulative consumption')
 fig = px.line(filter_df(historical_counter.online_df, wine_names), x='timestamp', y='cumulative_wine_consumption', color='wine_name')
 st.write(fig)
 
-
-
+st.subheader('24 hour rolling average of glasses consumed')
+consumption_per_hour = historical_counter.online_df.groupby('timestamp')['wine_consumption'].sum()
+consumption_per_hour = pd.DataFrame(consumption_per_hour)
+consumption_per_hour['rolling_24'] = consumption_per_hour.rolling(24).sum()
+st.write(consumption_per_hour)
+fig = px.line(consumption_per_hour.reset_index(), x='timestamp', y='rolling_24')
+st.write(fig)
 
 st.write(filter_df(historical_counter.online_df, wine_names))
 st.write(filter_df(historical_counter.stock_change_df, wine_names))

@@ -38,20 +38,33 @@ class StockCounter:
             self.online_df = load_today_df()
         print(f"Oldest datapoint is {self.online_df['timestamp'].min()}")
         print(f"Latest datapoint is {self.online_df['timestamp'].max()}")
-        self.stock_change_df = self.get_daily_stock_change_df()
+        self.stock_change_df = self.get_stock_change_df()
         print('Calculated stock change df')
 
-    def get_daily_stock_change_df(self):
+    @property
+    def bottles_sold(self):
+        return self.online_df['wine_consumption'].sum()
+
+    @property
+    def glasses_sold(self):
+        return self.bottles_sold * constants.GLASSES_IN_A_BOTTLE
+
+    def get_stock_change_df(self):
+        """
+        Provides analysis of stock change over time. This will incorporate change over the entire time period in
+        `online_df`; it doesn't care whether `online_df` contains an hour, day, or weeks worth of data.
+        """
         df = self.online_df
 
         most_recent = self.online_df['timestamp'].max()
         oldest = self.online_df['timestamp'].min()
 
         df.sort_values(by=['id', 'timestamp'], inplace=True)
-        df['stock_delta'] = df.groupby('wine_type')['stock'].diff()
+        df['stock_delta'] = df.groupby('id')['stock'].diff()
         df['wine_consumption'] = df['stock_delta'].apply(lambda x: abs(min(0, x)))
         df['cumulative_wine_consumption'] = df.groupby('id')['wine_consumption'].cumsum()
 
+        print(f'Total consumption for this period is {self.bottles_sold} bottles, or {self.glasses_sold} glasses')
         stock_1_day_ago_df = df.loc[df['timestamp'] == oldest]
 
         stock_change_df = self.online_df.loc[self.online_df['timestamp'] == most_recent].copy()
@@ -80,19 +93,12 @@ class StockCounter:
         return stock_change_df
 
     @property
-    def bottles_sold(self):
-        return self.stock_change_df['stock_change'].sum()
-
-    @property
-    def glasses_sold(self):
-        return self.bottles_sold * constants.GLASSES_IN_A_BOTTLE
-
-    @property
     def sales_by_wine_type(self):
-        _df = self.stock_change_df.copy()
-        _df.dropna(inplace=True, subset=['wine_type_now'])
-        _df = _df.groupby('wine_type_now').sum()
-        return {'red': _df.loc['Red wine']['stock_change'],
-                'white': _df.loc['White wine']['stock_change'],
-                'rose': _df.loc['Rosé']['stock_change'],
+
+        _df = self.online_df.groupby(['wine_type']).sum()['wine_consumption']
+        return {'red': _df.loc['Red wine'],
+                'white': _df.loc['White wine'],
+                'rose': _df.loc['Rosé'],
                 }
+
+

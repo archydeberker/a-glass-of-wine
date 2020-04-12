@@ -5,7 +5,7 @@ from functools import lru_cache
 from flask import Flask, render_template
 
 from webapp.api.graphs import map_wines, plot_cases, plot_log_daily, encode_as_json
-from webapp.api.wine import Wine, StockCounter, glasses_sold_yesterday
+from webapp.api.wine import Wine, StockCounter
 from webapp.api.utils import DataFetcher
 from webapp.api.cases import CaseData, get_cases_from_api
 from constants import Colours, CASE_CITATION, CASE_API_GITHUB
@@ -15,6 +15,10 @@ app = Flask(__name__)
 
 local = os.path.exists('/Users/archydeberker')
 case_local_path = '/Users/archydeberker/Desktop/code/saq/scripts/canada_case_data_latest.csv' if local else None
+
+
+def _format_integer(number: float):
+    return f"{int(number):,}"
 
 
 @lru_cache(128)
@@ -53,16 +57,15 @@ def home_page(language='en'):
     days_since_lockdown_started = (datetime.datetime.now().date() - datetime.date(year=2020, month=3, day=22)).days
 
     if language == 'en':
-        content = ContentEn(days_since_lockdown_started, glasses_sold_yesterday(stock.latest_data.stock_change_df))
+        content = ContentEn(days_since_lockdown_started, _format_integer(stock.latest_data.glasses_sold))
     else:
-        content = ContentFr(days_since_lockdown_started, glasses_sold_yesterday(stock.latest_data.stock_change_df))
+        content = ContentFr(days_since_lockdown_started, _format_integer(stock.latest_data.glasses_sold))
 
     return render_template('home.html',
                            french=language == 'fr',
                            content=content,
                            days_since_lockdown_started=days_since_lockdown_started,
                            top_wines=wines,
-                           glasses_sold=glasses_sold_yesterday(stock.latest_data.stock_change_df),
                            red_percentage=percentages['red'],
                            white_percentage=percentages['white'],
                            rose_percentage=percentages['rose'],
