@@ -137,7 +137,7 @@ class ContentFr:
 
     @property
     def map_blurb(self):
-        return "Malgré l’isolation, nous sommes connectés au reste du monde par nos choix de vin! "
+        return "Malgré l’isolement, nous sommes connectés au reste du monde par nos choix de vin! "
 
     @property
     def since_we_started_drinking(self):
@@ -147,7 +147,7 @@ class ContentFr:
     def prediction(self):
         return """
         Plusieurs semaines doivent s’écouler avant que les impacts de la distanciation sociale soient visibles. 
-        Les effets plus tangibles devraient se faire sentir aux alentours de la mi avril. 
+        Les effets plus tangibles devraient se faire sentir aux alentours de la mi-avril. 
         """
 
     @property
