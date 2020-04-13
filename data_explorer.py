@@ -19,28 +19,9 @@ def load_data():
 
 
 @st.cache
-def load_all_online_data():
-    historical_online_data = '/Users/archydeberker/Desktop/code/saq/scripts/online_data_latest.csv'
-    df = pd.read_csv(historical_online_data,
-                     parse_dates=['timestamp'],
-                     dtype={'wine_name': 'object',
-                            'id': 'int64',
-                            'stock': 'int64',
-                            'timestamp': 'str',
-                            'wine_img': 'str'})
-
-    counter = StockCounter(df)
-    return counter
-
-
-@st.cache
 def load_case_data():
     cases = CaseData(use_cached=True, local_path='/Users/archydeberker/Desktop/code/saq/scripts/canada_case_data_latest.csv')
     return cases
-
-
-def filter_df(df, wine_names):
-    return df.loc[df['wine_name'].isin(wine_names)]
 
 
 counter = load_data()
@@ -118,43 +99,6 @@ fig.update_layout(
         coastlinecolor='white',
     )
 )
-st.write(fig)
-
-st.title('All historical data')
-historical_counter = load_all_online_data()
-
-st.write('Stock')
-fig = px.line(filter_df(historical_counter.online_df, wine_names), x='timestamp', y='stock', color='wine_name')
-st.write(fig)
-st.write('Consumption')
-fig = px.line(filter_df(historical_counter.online_df, wine_names), x='timestamp', y='wine_consumption', color='wine_name')
-st.write(fig)
-st.write('Cumulative consumption')
-fig = px.line(filter_df(historical_counter.online_df, wine_names), x='timestamp', y='cumulative_wine_consumption', color='wine_name')
-st.write(fig)
-
-st.subheader('24 hour rolling average of glasses consumed')
-consumption_per_hour = historical_counter.online_df.groupby('timestamp')['wine_consumption'].sum()
-consumption_per_hour = pd.DataFrame(consumption_per_hour)
-consumption_per_hour['rolling_24'] = consumption_per_hour.rolling(24).sum()
-st.write(consumption_per_hour)
-fig = px.line(consumption_per_hour.reset_index(), x='timestamp', y='rolling_24')
-st.write(fig)
-
-st.write(filter_df(historical_counter.online_df, wine_names))
-st.write(filter_df(historical_counter.stock_change_df, wine_names))
-
-st.header('By colour')
-_new_data = historical_counter.online_df.dropna(subset=['wine_type']).groupby(['timestamp', 'wine_type']).sum().reset_index()
-_new_data['alt_cum_con'] = _new_data.groupby(['wine_type'])['wine_consumption'].cumsum()
-st.write(_new_data)
-fig = px.line(_new_data, x='timestamp', y='stock', color='wine_type', template="plotly_white")
-st.write(fig)
-
-st.header('Cumulative consumption on log plot')
-
-fig = px.line(_new_data, x='timestamp', y='alt_cum_con', color='wine_type', template="plotly_white")
-fig.update_layout(yaxis_type="log", showlegend=False)
 st.write(fig)
 
 
