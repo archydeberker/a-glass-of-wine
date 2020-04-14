@@ -120,12 +120,12 @@ class ContentFr:
     def recommendations(self):
         return '''
             Nous avons analysé l’inventaire en ligne de la SAQ, histoire de comprendre comment la 
-            population suit les recommandations de Legault.
+            population suit les recommandations du Premier Ministre Legault.
             '''
 
     @property
     def wine_types(self):
-        return "Sommes nous plus rouge, blanc ou rosé?"
+        return "Sommes-nous plus rouge, blanc ou rosé?"
 
     @property
     def trending(self):
@@ -152,7 +152,7 @@ class ContentFr:
 
     @property
     def relative_to_world(self):
-        return "Comment on se situe comparativement à ailleurs"
+        return "Comment se situe-t-on comparativement à ailleurs?"
 
     @property
     def internationally(self):
@@ -164,13 +164,13 @@ class ContentFr:
     @property
     def stay_home(self):
         return '''
-                Restez à la maison, ouvrez une bonne bouteille, et dites vous que tout le Québec lève son verre ensemble! 
+                Restez à la maison, ouvrez une bonne bouteille, et dites-vous que tout le Québec lève son verre ensemble!
                 '''
 
     @property
     def footer(self):
         return Markup("""
-                <strong>Un Verre de Vin Peut Aider </strong> est fait par
+                <strong>Un Verre de Vin Peut Aider </strong> a été conçu et réalisé par
                 <a href="https://www.linkedin.com/in/archy-de-berker/"> 
                 Archy de Berker </a> et <a href="https://www.linkedin.com/in/claudelrheault/">
                  Claudel Rheault</a> avec l'aide de
@@ -178,10 +178,10 @@ class ContentFr:
                 <p class='is-size-6 is-family-serif'>
                 Nous aimerions être en contact;  
                 <a href="https://ctt.ac/68jVg">
-                 tweet-nous un photo </a> avec un grand verre de ta vintage preferée! 
+                 Envoyez-nous une photo  sur Twitter</a> avec un grand verre de votre vin preferé!
                  </p>
                  
-                <p class="is-size-9"> Données de COVID-19 rafraîchie chaque jour de
+                <p class="is-size-9"> Données de COVID-19 rafraîchies chaque jour à partir de
                 <a href={{data_citation}}> COVID-19 Canada Open Data Working Group </a>
             et <a href={{case_api_citation}}> the Coronavirus Tracker API </a></p>
             """)
