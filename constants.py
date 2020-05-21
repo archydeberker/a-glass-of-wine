@@ -37,9 +37,10 @@ COUNTRY_API_IDS = {'Italy': 137, 'South Korea': 143,
                 'PEI': 43,
                 'Saskatchewan': 45,
                 'Yukon': 256,
+                   'UK': 223,
                    }
 CASE_API_URL = 'https://coronavirus-tracker-api.herokuapp.com/v2/locations'
 CASE_API_GITHUB = 'https://github.com/ExpDev07/coronavirus-tracker-api'
-COUNTRIES_TO_GRAPH = ['Italy', 'South Korea',
+COUNTRIES_TO_GRAPH = ['Italy', 'South Korea', 'UK',
                                              'US', 'Quebec', 'British Columbia',
                                              'Ontario', 'Alberta']
